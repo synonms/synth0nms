@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
+#include <juce_audio_utils/juce_audio_utils.h>
 
 //==============================================================================
 /**
@@ -16,9 +17,9 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    Synth0nmsAudioProcessor& audioProcessor;
+    Synth0nmsAudioProcessor& m_audioProcessor;
+
+    juce::MidiKeyboardComponent m_keyboardComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessorEditor)
 };

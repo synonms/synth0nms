@@ -127,6 +127,9 @@ void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
+    // Inject virtual keyboard events into the MIDI buffer
+    keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
+
     m_waveTableSynth.processBlock (buffer, midiMessages);
 }
 
