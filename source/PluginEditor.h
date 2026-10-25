@@ -5,11 +5,11 @@
 //==============================================================================
 /**
 */
-class BasicOscillatorAudioProcessorEditor : public juce::AudioProcessorEditor
+class Synth0nmsAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-    BasicOscillatorAudioProcessorEditor (Synth0nmsAudioProcessor&);
-    ~BasicOscillatorAudioProcessorEditor() override;
+    Synth0nmsAudioProcessorEditor (Synth0nmsAudioProcessor&);
+    ~Synth0nmsAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -20,5 +20,5 @@ private:
     // access the processor object that created it.
     Synth0nmsAudioProcessor& audioProcessor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicOscillatorAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessorEditor)
 };

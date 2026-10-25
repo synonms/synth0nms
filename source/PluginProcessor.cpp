@@ -137,7 +137,7 @@ bool Synth0nmsAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Synth0nmsAudioProcessor::createEditor()
 {
-    return new BasicOscillatorAudioProcessorEditor (*this);
+    return new Synth0nmsAudioProcessorEditor (*this);
 }
 
 //==============================================================================
@@ -158,6 +158,7 @@ void Synth0nmsAudioProcessor::setStateInformation (const void* data, int sizeInB
 }
 
 //==============================================================================
+// Global function required by the JUCE build
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter ()
 {
     return new Synth0nmsAudioProcessor();

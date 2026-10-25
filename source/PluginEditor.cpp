@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-BasicOscillatorAudioProcessorEditor::BasicOscillatorAudioProcessorEditor (Synth0nmsAudioProcessor& p)
+Synth0nmsAudioProcessorEditor::Synth0nmsAudioProcessorEditor (Synth0nmsAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -18,12 +18,12 @@ BasicOscillatorAudioProcessorEditor::BasicOscillatorAudioProcessorEditor (Synth0
     setSize (400, 300);
 }
 
-BasicOscillatorAudioProcessorEditor::~BasicOscillatorAudioProcessorEditor()
+Synth0nmsAudioProcessorEditor::~Synth0nmsAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void BasicOscillatorAudioProcessorEditor::paint (juce::Graphics& g)
+void Synth0nmsAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
@@ -33,7 +33,7 @@ void BasicOscillatorAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
-void BasicOscillatorAudioProcessorEditor::resized()
+void Synth0nmsAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
