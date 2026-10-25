@@ -1,8 +1,9 @@
 #pragma once
 
-#include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
+
+#include "WaveTableSynth.h"
 
 //==============================================================================
 /**
@@ -50,4 +51,6 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessor)
+
+    WaveTableSynth m_waveTableSynth;
 };

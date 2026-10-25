@@ -85,7 +85,7 @@ void Synth0nmsAudioProcessor::changeProgramName (int index, const juce::String& 
 
 void Synth0nmsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback initialisation that you need..
+    m_waveTableSynth.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void Synth0nmsAudioProcessor::releaseResources()
@@ -119,14 +119,15 @@ bool Synth0nmsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
+void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+{
     juce::ScopedNoDenormals noDenormals;
 
     for (auto i = 0; i < buffer.getNumChannels(); ++i) {
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    // Your plugin's audio processing code goes here...
+    m_waveTableSynth.processBlock (buffer, midiMessages);
 }
 
 //==============================================================================

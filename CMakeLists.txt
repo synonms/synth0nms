@@ -16,7 +16,7 @@ project(${TARGET} VERSION ${CURRENT_VERSION})
 add_subdirectory(modules/JUCE)
 
 # Add the JUCE plugin - this creates preprocessor macros e.g. JucePlugin_Name
-juce_add_plugin(synth0nms
+juce_add_plugin(${TARGET}
     COMPANY_NAME ${COMPANY_NAME}
     PRODUCT_NAME ${PRODUCT_NAME}
     VERSION ${CURRENT_VERSION}
@@ -27,6 +27,7 @@ juce_add_plugin(synth0nms
     NEEDS_MIDI_OUTPUT FALSE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS TRUE
+    JUCE_VST3_CAN_REPLACE_VST2 1
 )
 
 # Add all source files
@@ -35,10 +36,10 @@ file(GLOB_RECURSE SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h"
 )
 
-target_sources(synth0nms PRIVATE ${SOURCE_FILES})
+target_sources(${TARGET} PRIVATE ${SOURCE_FILES})
 
 # Link standard JUCE modules 
-target_link_libraries(synth0nms PRIVATE
+target_link_libraries(${TARGET} PRIVATE
     juce::juce_audio_basics
     juce::juce_audio_devices
     juce::juce_audio_formats
@@ -53,6 +54,6 @@ target_link_libraries(synth0nms PRIVATE
 )
 
 # Include JUCE modules for CLion IDE indexing
-target_include_directories(synth0nms PRIVATE
+target_include_directories(${TARGET} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/modules/JUCE/modules
 )
