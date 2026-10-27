@@ -49,10 +49,15 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     juce::MidiKeyboardState keyboardState;
+    juce::AudioProcessorValueTreeState audioProcessorValueTreeState;
 
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessor)
 
-    WaveTableSynth m_waveTableSynth;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParams();
+
+//    WaveTableSynth m_waveTableSynth;
+
+    juce::Synthesiser m_synth;
 };

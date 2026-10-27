@@ -12,6 +12,12 @@ Synth0nmsAudioProcessorEditor::Synth0nmsAudioProcessorEditor (Synth0nmsAudioProc
     setSize (2048, 1024);
     addAndMakeVisible (m_keyboardComponent);
     m_keyboardComponent.setBounds (0, 0, 2048, 256);
+
+    m_attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.audioProcessorValueTreeState, "ATTACK", m_attackSlider);
+    m_decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.audioProcessorValueTreeState, "DECAY", m_decaySlider);
+    m_sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.audioProcessorValueTreeState, "SUSTAIN", m_sustainSlider);
+    m_releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.audioProcessorValueTreeState, "RELEASE", m_releaseSlider);
+    m_waveformSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.audioProcessorValueTreeState, "OSC", m_waveformSelector);
 }
 
 Synth0nmsAudioProcessorEditor::~Synth0nmsAudioProcessorEditor() = default;

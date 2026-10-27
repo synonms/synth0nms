@@ -1,27 +1,49 @@
 #include "WaveTableSynth.h"
 
-void WaveTableSynth::prepareToPlay(double sampleRate, int samplesPerBlock)
+void WaveTableSynth::prepareToPlay(juce::dsp::ProcessSpec processSpec)
 {
-    m_sampleRate = sampleRate;
+    m_sampleRate = processSpec.sampleRate;
 
-    initialiseOscillators();
+    // Approach 1
+//    initialiseOscillators();
+
+    // Approach 2
+    m_sineWaveOscillator.prepare(processSpec);
+    m_sawWaveOscillator.prepare(processSpec);
+    m_squareWaveOscillator.prepare(processSpec);
+    m_gain.prepare(processSpec);
+
+    m_sineWaveOscillator.setFrequency(220.f);
+    m_sawWaveOscillator.setFrequency(440.f);
+    m_squareWaveOscillator.setFrequency(880.f);
+    m_gain.setGainLinear(0.01f);
 }
 
 void WaveTableSynth::processBlock(juce::AudioBuffer<float>& audioBuffer, const juce::MidiBuffer& midiBuffer)
 {
-    int currentSample = 0;
+    // Approach 1
+    // int currentSample = 0;
+    //
+    // for (const auto midiMessage : midiBuffer) {
+    //     const juce::MidiMessage midiEvent = midiMessage.getMessage();
+    //     const int midiEventSample = static_cast<int>(midiEvent.getTimeStamp());
+    //
+    //     render(audioBuffer, currentSample, midiEventSample);
+    //     handleMidiEvent(midiEvent);
+    //
+    //     currentSample = midiEventSample;
+    // }
+    //
+    // render(audioBuffer, currentSample, audioBuffer.getNumSamples());
 
-    for (const auto midiMessage : midiBuffer) {
-        const juce::MidiMessage midiEvent = midiMessage.getMessage();
-        const int midiEventSample = static_cast<int>(midiEvent.getTimeStamp());
-
-        render(audioBuffer, currentSample, midiEventSample);
-        handleMidiEvent(midiEvent);
-
-        currentSample = midiEventSample;
-    }
-
-    render(audioBuffer, currentSample, audioBuffer.getNumSamples());
+    // Approach 2
+    juce::dsp::AudioBlock<float> audioBlock(audioBuffer);
+    // Write oscillator waves to audio buffer
+    m_sineWaveOscillator.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    m_sawWaveOscillator.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    m_squareWaveOscillator.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
+    // Bring down gain to avoid blowing ear drums
+    m_gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
 }
 
 void WaveTableSynth::initialiseOscillators()

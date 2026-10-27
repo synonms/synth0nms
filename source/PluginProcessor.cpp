@@ -1,5 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "SynthSound.h"
+#include "SynthVoice.h"
 
 //==============================================================================
 Synth0nmsAudioProcessor::Synth0nmsAudioProcessor()
@@ -14,8 +16,11 @@ Synth0nmsAudioProcessor::Synth0nmsAudioProcessor()
                       #endif
                       #endif
                       )
+    , audioProcessorValueTreeState (*this, nullptr, "Parameters", createParams())
 #endif
 {
+    m_synth.addSound(new SynthSound());
+    m_synth.addVoice(new SynthVoice());
 }
 
 Synth0nmsAudioProcessor::~Synth0nmsAudioProcessor() = default;
@@ -85,7 +90,13 @@ void Synth0nmsAudioProcessor::changeProgramName (int index, const juce::String& 
 
 void Synth0nmsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    m_waveTableSynth.prepareToPlay(sampleRate, samplesPerBlock);
+    m_synth.setCurrentPlaybackSampleRate(sampleRate);
+
+    for (int i = 0; i < m_synth.getNumVoices(); ++i) {
+        if (auto voice = dynamic_cast<SynthVoice*>(m_synth.getVoice(i))) {
+            voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
+        }
+    }
 }
 
 void Synth0nmsAudioProcessor::releaseResources()
@@ -119,18 +130,29 @@ bool Synth0nmsAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& audioBuffer, juce::MidiBuffer& midiBuffer)
 {
     juce::ScopedNoDenormals noDenormals;
 
-    for (auto i = 0; i < buffer.getNumChannels(); ++i) {
-        buffer.clear(i, 0, buffer.getNumSamples());
+    for (int i = 0; i < audioBuffer.getNumChannels(); ++i) {
+        audioBuffer.clear(i, 0, audioBuffer.getNumSamples());
     }
 
     // Inject virtual keyboard events into the MIDI buffer
-    keyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
+    keyboardState.processNextMidiBuffer (midiBuffer, 0, audioBuffer.getNumSamples(), true);
 
-    m_waveTableSynth.processBlock (buffer, midiMessages);
+//    m_waveTableSynth.processBlock (audioBuffer, midiBuffer);
+
+    // Update parameters
+    for (int i = 0; i < m_synth.getNumVoices(); ++i) {
+        if (auto voice = dynamic_cast<juce::SynthesiserVoice*>(m_synth.getVoice(i))) {
+            // OSC controls
+            // ADSR
+            // LFO
+        }
+    }
+
+    m_synth.renderNextBlock(audioBuffer, midiBuffer, 0, audioBuffer.getNumSamples());
 }
 
 //==============================================================================
@@ -159,6 +181,22 @@ void Synth0nmsAudioProcessor::setStateInformation (const void* data, int sizeInB
     // When you save them in getStateInformation(), use it to restore 
     // the state of your parameters. Make sure to also check that you're actually
     // using the right version number when saving.
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout Synth0nmsAudioProcessor::createParams()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    // Oscillator wave form options
+    parameters.push_back(std::make_unique<juce::AudioParameterChoice>("OSC", "Oscillator", juce::StringArray { "Sine", "Saw", "Square" }, 0));
+
+    // ADSR
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f ));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f ));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f }, 1.0f ));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f }, 0.4f ));
+
+    return { parameters.begin(), parameters.end() };
 }
 
 //==============================================================================
