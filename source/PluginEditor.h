@@ -32,5 +32,7 @@ private:
 
     Synth0nmsAudioProcessor& m_audioProcessor;
 
+    void setSliderParams(juce::Slider& slider);
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessorEditor)
 };

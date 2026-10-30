@@ -18,9 +18,12 @@ public:
 
     void prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannelCount);
 
+    void updateAdsr(float attack, float decay, float sustain, float release);
+
 private:
     juce::dsp::Oscillator<float> m_oscillator {[] (float x) { return std::sin (x); }};
     juce::dsp::Gain<float> m_gain;
     juce::ADSR m_adsr;
     juce::ADSR::Parameters m_adsrParameters;
+
 };

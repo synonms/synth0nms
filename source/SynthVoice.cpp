@@ -4,7 +4,6 @@
 
 void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannelCount)
 {
-
     juce::dsp::ProcessSpec processSpec {};
     processSpec.maximumBlockSize = samplesPerBlock;
     processSpec.sampleRate = sampleRate;
@@ -13,15 +12,18 @@ void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outp
     m_oscillator.prepare(processSpec);
     m_gain.prepare(processSpec);
 
-    m_gain.setGainLinear(0.05f);
-
-    // Set defaults
-    m_adsrParameters.attack = 0.8f;
-    m_adsrParameters.decay = 0.8f;
-    m_adsrParameters.sustain = 1.0f;
-    m_adsrParameters.release = 1.5f;
+    m_gain.setGainLinear(0.1f);
 
     m_adsr.setSampleRate(sampleRate);
+}
+
+void SynthVoice::updateAdsr(const float attack, const float decay, const float sustain, const float release)
+{
+    m_adsrParameters.attack = attack;
+    m_adsrParameters.decay = decay;
+    m_adsrParameters.sustain = sustain;
+    m_adsrParameters.release = release;
+
     m_adsr.setParameters(m_adsrParameters);
 }
 

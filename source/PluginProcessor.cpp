@@ -145,10 +145,17 @@ void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& audioBuffe
 
     // Update parameters
     for (int i = 0; i < m_synth.getNumVoices(); ++i) {
-        if (auto voice = dynamic_cast<juce::SynthesiserVoice*>(m_synth.getVoice(i))) {
+        if (auto voice = dynamic_cast<SynthVoice*>(m_synth.getVoice(i))) {
             // OSC controls
             // ADSR
             // LFO
+
+            const float attack = audioProcessorValueTreeState.getRawParameterValue("ATTACK")->load();
+            const float decay = audioProcessorValueTreeState.getRawParameterValue("DECAY")->load();
+            const float sustain = audioProcessorValueTreeState.getRawParameterValue("SUSTAIN")->load();
+            const float release = audioProcessorValueTreeState.getRawParameterValue("RELEASE")->load();
+
+            voice->updateAdsr(attack, decay, sustain, release);
         }
     }
 
