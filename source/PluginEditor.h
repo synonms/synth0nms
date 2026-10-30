@@ -1,6 +1,8 @@
 #pragma once
 
 #include "PluginProcessor.h"
+#include "ui/AdsrComponent.h"
+
 #include <juce_audio_utils/juce_audio_utils.h>
 
 //==============================================================================
@@ -17,22 +19,13 @@ public:
     void resized() override;
 
 private:
-    juce::Slider m_attackSlider;
-    juce::Slider m_decaySlider;
-    juce::Slider m_sustainSlider;
-    juce::Slider m_releaseSlider;
-    juce::ComboBox m_waveformSelector;
-    juce::MidiKeyboardComponent m_keyboardComponent;
+    Synth0nmsAudioProcessor& m_audioProcessor;
+    AdsrComponent m_adsrComponent;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_attackAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_decayAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_sustainAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_releaseAttachment;
+    juce::ComboBox m_waveformSelector;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> m_waveformSelectorAttachment;
 
-    Synth0nmsAudioProcessor& m_audioProcessor;
-
-    void setSliderParams(juce::Slider& slider);
+    juce::MidiKeyboardComponent m_keyboardComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessorEditor)
 };

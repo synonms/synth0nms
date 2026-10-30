@@ -3,6 +3,8 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_dsp/juce_dsp.h>
 
+#include "processing/Adsr.h"
+
 class SynthVoice : public juce::SynthesiserVoice
 {
 public:
@@ -23,7 +25,5 @@ public:
 private:
     juce::dsp::Oscillator<float> m_oscillator {[] (float x) { return std::sin (x); }};
     juce::dsp::Gain<float> m_gain;
-    juce::ADSR m_adsr;
-    juce::ADSR::Parameters m_adsrParameters;
-
+    Adsr m_adsr;
 };
