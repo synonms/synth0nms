@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "ui/AdsrComponent.h"
+#include "ui/OscillatorComponent.h"
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
@@ -21,9 +22,7 @@ public:
 private:
     Synth0nmsAudioProcessor& m_audioProcessor;
     AdsrComponent m_adsrComponent;
-
-    juce::ComboBox m_waveformSelector;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> m_waveformSelectorAttachment;
+    OscillatorComponent m_oscillatorComponent;
 
     juce::MidiKeyboardComponent m_keyboardComponent;
 

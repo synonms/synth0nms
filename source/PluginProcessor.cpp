@@ -145,7 +145,7 @@ void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& audioBuffe
 
     // Update parameters
     for (int i = 0; i < m_synth.getNumVoices(); ++i) {
-        if (auto voice = dynamic_cast<SynthVoice*>(m_synth.getVoice(i))) {
+        if (SynthVoice* voice = dynamic_cast<SynthVoice *>(m_synth.getVoice(i))) {
             // OSC controls
             // ADSR
             // LFO
@@ -154,8 +154,10 @@ void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& audioBuffe
             const float decay = audioProcessorValueTreeState.getRawParameterValue("DECAY")->load();
             const float sustain = audioProcessorValueTreeState.getRawParameterValue("SUSTAIN")->load();
             const float release = audioProcessorValueTreeState.getRawParameterValue("RELEASE")->load();
-
             voice->updateAdsr(attack, decay, sustain, release);
+
+            OscillatorFunctionType osc1FunctionType = static_cast<OscillatorFunctionType>(audioProcessorValueTreeState.getRawParameterValue("OSC1FUNCTION")->load());
+            voice->updateFunctionType(osc1FunctionType);
         }
     }
 
@@ -195,7 +197,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Synth0nmsAudioProcessor::cre
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     // Oscillator wave form options
-    parameters.push_back(std::make_unique<juce::AudioParameterChoice>("OSC", "Oscillator", juce::StringArray { "Sine", "Saw", "Square" }, 0));
+    parameters.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1FUNCTION", "Oscillator 1 Function", juce::StringArray { "Sine", "Saw", "Square" }, 0));
 
     // ADSR
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f ));

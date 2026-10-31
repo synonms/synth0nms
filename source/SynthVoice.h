@@ -4,6 +4,7 @@
 #include <juce_dsp/juce_dsp.h>
 
 #include "processing/Adsr.h"
+#include "processing/Oscillator.h"
 
 class SynthVoice : public juce::SynthesiserVoice
 {
@@ -21,9 +22,10 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannelCount);
 
     void updateAdsr(float attack, float decay, float sustain, float release);
+    void updateFunctionType(const OscillatorFunctionType& functionType);
 
 private:
-    juce::dsp::Oscillator<float> m_oscillator {[] (float x) { return std::sin (x); }};
+    Oscillator m_oscillator;
     juce::dsp::Gain<float> m_gain;
     Adsr m_adsr;
 };
