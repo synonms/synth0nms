@@ -23,6 +23,7 @@ public:
 
     void updateAdsr(float attack, float decay, float sustain, float release);
     void updateFunctionType(const OscillatorFunctionType& functionType);
+    void updateFrequencyModulation(float frequency, float depth);
 
 private:
     Oscillator m_oscillator;

@@ -1,7 +1,5 @@
 #include "SynthVoice.h"
 
-#include <juce_dsp/juce_dsp.h>
-
 void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannelCount)
 {
     juce::dsp::ProcessSpec processSpec {};
@@ -87,4 +85,9 @@ void SynthVoice::updateAdsr(const float attack, const float decay, const float s
 void SynthVoice::updateFunctionType(const OscillatorFunctionType &functionType)
 {
     m_oscillator.setFunctionType(functionType);
+}
+
+void SynthVoice::updateFrequencyModulation(float frequency, float depth)
+{
+    m_oscillator.setFrequencyModulation(frequency, depth);
 }
