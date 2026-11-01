@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "ui/AdsrComponent.h"
+#include "ui/FilterComponent.h"
 #include "ui/OscillatorComponent.h"
 
 #include <juce_audio_utils/juce_audio_utils.h>
@@ -22,6 +23,7 @@ public:
 private:
     Synth0nmsAudioProcessor& m_audioProcessor;
     AdsrComponent m_adsrComponent;
+    FilterComponent m_filterComponent;
     OscillatorComponent m_oscillatorComponent;
 
     juce::MidiKeyboardComponent m_keyboardComponent;

@@ -4,6 +4,7 @@
 #include <juce_core/juce_core.h>
 
 #include "WaveTableSynth.h"
+#include "processing/Filter.h"
 
 //==============================================================================
 /**
@@ -59,5 +60,6 @@ private:
 
 //    WaveTableSynth m_waveTableSynth;
 
-    juce::Synthesiser m_synth;
+    juce::Synthesiser m_synth; // Move to SynoSynth class
+    Filter m_filter; // Move to SynoSynth class
 };
