@@ -6,8 +6,8 @@ class Filter
 {
 public:
     void prepareToPlay (const juce::dsp::ProcessSpec& processSpec);
-    void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, const juce::MidiBuffer& midiBuffer, int startSample, int numSamples);
-    void updateParameters(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance);
+    void renderNextBlock(juce::dsp::ProcessContextReplacing<float>& context);
+    void updateParameters(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance, float modulator = 1.0f);
     void reset();
 
 private:

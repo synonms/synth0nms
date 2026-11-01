@@ -4,6 +4,7 @@
 #include <juce_dsp/juce_dsp.h>
 
 #include "processing/Adsr.h"
+#include "processing/Filter.h"
 #include "processing/Oscillator.h"
 
 class SynthVoice : public juce::SynthesiserVoice
@@ -21,12 +22,24 @@ public:
 
     void prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannelCount);
 
-    void updateAdsr(float attack, float decay, float sustain, float release);
-    void updateFunctionType(const OscillatorFunctionType& functionType);
-    void updateFrequencyModulation(float frequency, float depth);
+    // Oscillator controls
+    void updateOscillatorFunctionType(const OscillatorFunctionType& functionType);
+    void updateOscillatorFrequencyModulation(float frequency, float depth);
+
+    // Amplitude ADSR controls
+    void updateAmplitudeAdsr(float attack, float decay, float sustain, float release);
+
+    // Filter controls
+    void updateFilter(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance);
+
+    // Modulation ADSR controls
+    void updateModulationAdsr(float attack, float decay, float sustain, float release);
 
 private:
     Oscillator m_oscillator;
+    Adsr m_amplitudeAdsr;
+    Filter m_filter;
+    Adsr m_modulationAdsr;
+
     juce::dsp::Gain<float> m_gain;
-    Adsr m_adsr;
 };

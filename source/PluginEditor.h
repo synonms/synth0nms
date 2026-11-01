@@ -22,9 +22,10 @@ public:
 
 private:
     Synth0nmsAudioProcessor& m_audioProcessor;
-    AdsrComponent m_adsrComponent;
+    AdsrComponent m_amplitudeAdsrComponent;
     FilterComponent m_filterComponent;
     OscillatorComponent m_oscillatorComponent;
+    AdsrComponent m_modulationAdsrComponent;
 
     juce::MidiKeyboardComponent m_keyboardComponent;
 

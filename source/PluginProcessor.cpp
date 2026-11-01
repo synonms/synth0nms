@@ -97,12 +97,6 @@ void Synth0nmsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
             voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
         }
     }
-
-    juce::dsp::ProcessSpec processSpec {};
-    processSpec.maximumBlockSize = samplesPerBlock;
-    processSpec.sampleRate = sampleRate;
-    processSpec.numChannels = getTotalNumOutputChannels();
-    m_filter.prepareToPlay(processSpec);
 }
 
 void Synth0nmsAudioProcessor::releaseResources()
@@ -153,29 +147,33 @@ void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& audioBuffe
     for (int i = 0; i < m_synth.getNumVoices(); ++i) {
         if (auto* voice = dynamic_cast<SynthVoice*>(m_synth.getVoice(i)))
         {
+            auto osc1FunctionType = static_cast<OscillatorFunctionType>(audioProcessorValueTreeState.getRawParameterValue("OSC1FUNCTION")->load());
+            voice->updateOscillatorFunctionType(osc1FunctionType);
+
+            const float fmFrequency = audioProcessorValueTreeState.getRawParameterValue("OSC1FMFREQ")->load();
+            const float fmDepth = audioProcessorValueTreeState.getRawParameterValue("OSC1FMDEPTH")->load();
+            voice->updateOscillatorFrequencyModulation(fmFrequency, fmDepth);
+
             const float attack = audioProcessorValueTreeState.getRawParameterValue("ATTACK")->load();
             const float decay = audioProcessorValueTreeState.getRawParameterValue("DECAY")->load();
             const float sustain = audioProcessorValueTreeState.getRawParameterValue("SUSTAIN")->load();
             const float release = audioProcessorValueTreeState.getRawParameterValue("RELEASE")->load();
-            voice->updateAdsr(attack, decay, sustain, release);
+            voice->updateAmplitudeAdsr(attack, decay, sustain, release);
 
-            auto osc1FunctionType = static_cast<OscillatorFunctionType>(audioProcessorValueTreeState.getRawParameterValue("OSC1FUNCTION")->load());
-            voice->updateFunctionType(osc1FunctionType);
+            const float modAttack = audioProcessorValueTreeState.getRawParameterValue("MODATTACK")->load();
+            const float modDecay = audioProcessorValueTreeState.getRawParameterValue("MODDECAY")->load();
+            const float modSustain = audioProcessorValueTreeState.getRawParameterValue("MODSUSTAIN")->load();
+            const float modRelease = audioProcessorValueTreeState.getRawParameterValue("MODRELEASE")->load();
+            voice->updateModulationAdsr(modAttack, modDecay, modSustain, modRelease);
 
-            const float fmFrequency = audioProcessorValueTreeState.getRawParameterValue("OSC1FMFREQ")->load();
-            const float fmDepth = audioProcessorValueTreeState.getRawParameterValue("OSC1FMDEPTH")->load();
-            voice->updateFrequencyModulation(fmFrequency, fmDepth);
+            auto filterType = static_cast<juce::dsp::StateVariableTPTFilterType>(audioProcessorValueTreeState.getRawParameterValue("FILTERTYPE")->load());
+            const float cutoff = audioProcessorValueTreeState.getRawParameterValue("FILTERCUTOFF")->load();
+            const float resonance = audioProcessorValueTreeState.getRawParameterValue("FILTERRES")->load();
+            voice->updateFilter(filterType, cutoff, resonance);
         }
     }
 
     m_synth.renderNextBlock(audioBuffer, midiBuffer, 0, audioBuffer.getNumSamples());
-
-    // Apply filter
-    auto filterType = static_cast<juce::dsp::StateVariableTPTFilterType>(audioProcessorValueTreeState.getRawParameterValue("FILTERTYPE")->load());
-    const float cutoff = audioProcessorValueTreeState.getRawParameterValue("FILTERCUTOFF")->load();
-    const float resonance = audioProcessorValueTreeState.getRawParameterValue("FILTERRES")->load();
-    m_filter.updateParameters(filterType, cutoff, resonance);
-    m_filter.renderNextBlock(audioBuffer, midiBuffer, 0, audioBuffer.getNumSamples());
 }
 
 //==============================================================================
@@ -215,6 +213,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Synth0nmsAudioProcessor::cre
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f ));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f }, 1.0f ));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f }, 0.4f ));
+
+    // Modulation envelope
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MODATTACK", "Mod Attack", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f ));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MODDECAY", "Mod Decay", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f ));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MODSUSTAIN", "Mod Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f }, 1.0f ));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MODRELEASE", "Mod Release", juce::NormalisableRange<float> { 0.1f, 3.0f }, 0.4f ));
 
     // Oscillator options
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1FUNCTION", "Oscillator 1 Function", juce::StringArray { "Sine", "Saw", "Square" }, 0));

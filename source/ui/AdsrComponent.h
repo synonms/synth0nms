@@ -6,7 +6,7 @@
 class AdsrComponent : public juce::Component
 {
 public:
-    AdsrComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState);
+    AdsrComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& attackId, const std::string& decayId, const std::string& sustainId, const std::string& releaseId);
     ~AdsrComponent() override;
 
     void paint(juce::Graphics& graphics) override;

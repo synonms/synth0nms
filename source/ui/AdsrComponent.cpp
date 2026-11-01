@@ -1,13 +1,13 @@
 #include "AdsrComponent.h"
 
-AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState)
+AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& attackId, const std::string& decayId, const std::string& sustainId, const std::string& releaseId)
     : juce::Component()
     , m_audioProcessorValueTreeState(audioProcessorValueTreeState)
 {
-    m_attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, "ATTACK", m_attackSlider);
-    m_decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, "DECAY", m_decaySlider);
-    m_sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, "SUSTAIN", m_sustainSlider);
-    m_releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, "RELEASE", m_releaseSlider);
+    m_attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, attackId, m_attackSlider);
+    m_decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, decayId, m_decaySlider);
+    m_sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, sustainId, m_sustainSlider);
+    m_releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, releaseId, m_releaseSlider);
 
     setSliderParams(m_attackSlider);
     setSliderParams(m_decaySlider);

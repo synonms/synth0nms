@@ -25,7 +25,7 @@ void Adsr::stopNote(float velocity, bool allowTailOff)
     noteOff();
 }
 
-void Adsr::renderNextBlock(juce::AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
+void Adsr::applyToBuffer(juce::AudioBuffer<float>& outputBuffer, const int startSample, const int numSamples)
 {
     applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
 }

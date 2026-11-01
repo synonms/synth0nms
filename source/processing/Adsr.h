@@ -10,7 +10,7 @@ public:
     void update(float attack, float decay, float sustain, float release);
     void startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition);
     void stopNote (float velocity, bool allowTailOff);
-    void renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples);
+    void applyToBuffer (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples);
 
 private:
     juce::ADSR::Parameters m_adsrParameters;
