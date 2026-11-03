@@ -1,16 +1,16 @@
 #include "OscillatorComponent.h"
 
-OscillatorComponent::OscillatorComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState)
+OscillatorComponent::OscillatorComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix)
     : juce::Component()
     , m_audioProcessorValueTreeState(audioProcessorValueTreeState)
 {
     juce::StringArray functions { "Sine", "Saw", "Square" };
     m_functionComboBox.addItemList(functions, 1);
     addAndMakeVisible(m_functionComboBox);
-    m_functionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessorValueTreeState, "OSC1FUNCTION", m_functionComboBox);
+    m_functionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessorValueTreeState, parameterPrefix + "FUNCTION", m_functionComboBox);
 
-    setSliderParams(m_fmFrequencySlider, m_fmFrequencyLabel, m_fmFrequencyAttachment, "OSC1FMFREQ");
-    setSliderParams(m_fmDepthSlider, m_fmDepthLabel, m_fmDepthAttachment, "OSC1FMDEPTH");
+    setSliderParams(m_fmFrequencySlider, m_fmFrequencyLabel, m_fmFrequencyAttachment, parameterPrefix + "FMFREQ");
+    setSliderParams(m_fmDepthSlider, m_fmDepthLabel, m_fmDepthAttachment, parameterPrefix + "FMDEPTH");
 }
 
 OscillatorComponent::~OscillatorComponent() = default;

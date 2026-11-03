@@ -7,9 +7,12 @@ void SynthVoice::prepareToPlay (double sampleRate, int samplesPerBlock, int outp
     processSpec.sampleRate = sampleRate;
     processSpec.numChannels = outputChannelCount;
 
-    m_oscillator.prepareToPlay(processSpec);
+    m_oscillator1.prepareToPlay(processSpec);
+    m_oscillator2.prepareToPlay(processSpec);
+    m_oscillator3.prepareToPlay(processSpec);
     m_amplitudeAdsr.prepareToPlay(processSpec);
-    m_filter.prepareToPlay(processSpec);
+    m_filter1.prepareToPlay(processSpec);
+    m_filter2.prepareToPlay(processSpec);
     m_modulationAdsr.prepareToPlay(processSpec);
 
     m_gain.prepare(processSpec);
@@ -23,14 +26,18 @@ bool SynthVoice::canPlaySound (juce::SynthesiserSound* sound)
 
 void SynthVoice::startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
 {
-    m_oscillator.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
+    m_oscillator1.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
+    m_oscillator2.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
+    m_oscillator3.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
     m_amplitudeAdsr.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
     m_modulationAdsr.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
 }
 
 void SynthVoice::stopNote (float velocity, bool allowTailOff)
 {
-    m_oscillator.stopNote(velocity, allowTailOff);
+    m_oscillator1.stopNote(velocity, allowTailOff);
+    m_oscillator2.stopNote(velocity, allowTailOff);
+    m_oscillator3.stopNote(velocity, allowTailOff);
     m_amplitudeAdsr.stopNote(velocity, allowTailOff);
     m_modulationAdsr.stopNote(velocity, allowTailOff);
 
@@ -71,13 +78,16 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int st
     m_modulationAdsr.applyToBuffer(outputBuffer, startSample, numSamples);
 
     // Write oscillator waves to audio buffer
-    m_oscillator.renderNextBlock(context);
+    m_oscillator1.renderNextBlock(context);
+    m_oscillator2.renderNextBlock(context);
+    m_oscillator3.renderNextBlock(context);
 
     // Apply Amplitude ADSR Function (Attack, Decay, Sustain, Release)
     m_amplitudeAdsr.applyToBuffer(outputBuffer, startSample, numSamples);
 
-    // Apply filter
-    m_filter.renderNextBlock(context);
+    // Apply filters
+    m_filter1.renderNextBlock(context);
+    m_filter2.renderNextBlock(context);
 
     // Bring down gain to avoid blowing ear drums
     m_gain.process(context);
@@ -87,14 +97,34 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int st
     }
 }
 
-void SynthVoice::updateOscillatorFunctionType(const OscillatorFunctionType &functionType)
+void SynthVoice::updateOscillator1FunctionType(const OscillatorFunctionType &functionType)
 {
-    m_oscillator.setFunctionType(functionType);
+    m_oscillator1.setFunctionType(functionType);
 }
 
-void SynthVoice::updateOscillatorFrequencyModulation(float frequency, float depth)
+void SynthVoice::updateOscillator1FrequencyModulation(float frequency, float depth)
 {
-    m_oscillator.setFrequencyModulation(frequency, depth);
+    m_oscillator1.setFrequencyModulation(frequency, depth);
+}
+
+void SynthVoice::updateOscillator2FunctionType(const OscillatorFunctionType &functionType)
+{
+    m_oscillator2.setFunctionType(functionType);
+}
+
+void SynthVoice::updateOscillator2FrequencyModulation(float frequency, float depth)
+{
+    m_oscillator2.setFrequencyModulation(frequency, depth);
+}
+
+void SynthVoice::updateOscillator3FunctionType(const OscillatorFunctionType &functionType)
+{
+    m_oscillator3.setFunctionType(functionType);
+}
+
+void SynthVoice::updateOscillator3FrequencyModulation(float frequency, float depth)
+{
+    m_oscillator3.setFrequencyModulation(frequency, depth);
 }
 
 void SynthVoice::updateAmplitudeAdsr(const float attack, const float decay, const float sustain, const float release)
@@ -102,10 +132,16 @@ void SynthVoice::updateAmplitudeAdsr(const float attack, const float decay, cons
     m_amplitudeAdsr.update(attack, decay, sustain, release);
 }
 
-void SynthVoice::updateFilter(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance)
+void SynthVoice::updateFilter1(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance)
 {
     float modulator = m_modulationAdsr.getNextSample();
-    m_filter.updateParameters(type, cutoffFrequency, resonance, modulator);
+    m_filter1.updateParameters(type, cutoffFrequency, resonance, modulator);
+}
+
+void SynthVoice::updateFilter2(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance)
+{
+    float modulator = m_modulationAdsr.getNextSample();
+    m_filter2.updateParameters(type, cutoffFrequency, resonance, modulator);
 }
 
 void SynthVoice::updateModulationAdsr(const float attack, const float decay, const float sustain, const float release)

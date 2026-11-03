@@ -1,0 +1,28 @@
+#pragma once
+
+#include "AdsrComponent.h"
+#include "FilterComponent.h"
+#include "OscillatorComponent.h"
+
+class SynthesiserComponent: public juce::Component
+{
+public:
+    SynthesiserComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, juce::MidiKeyboardState& keyboardState);
+    ~SynthesiserComponent() override = default;
+
+    void paint(juce::Graphics& graphics) override;
+    void resized() override;
+
+private:
+    OscillatorComponent m_oscillator1Component;
+    OscillatorComponent m_oscillator2Component;
+    OscillatorComponent m_oscillator3Component;
+    AdsrComponent m_modulationAdsrComponent;
+    FilterComponent m_filter1Component;
+    FilterComponent m_filter2Component;
+    AdsrComponent m_amplitudeAdsrComponent;
+
+    juce::MidiKeyboardComponent m_keyboardComponent;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthesiserComponent)
+};

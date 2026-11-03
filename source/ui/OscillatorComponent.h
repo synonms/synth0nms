@@ -6,7 +6,7 @@
 class OscillatorComponent : public juce::Component
 {
 public:
-    OscillatorComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState);
+    OscillatorComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix);
     ~OscillatorComponent() override;
 
     void paint(juce::Graphics& graphics) override;

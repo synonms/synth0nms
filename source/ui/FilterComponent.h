@@ -6,7 +6,7 @@
 class FilterComponent : public juce::Component
 {
 public:
-    FilterComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState);
+    FilterComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix);
     ~FilterComponent() override;
 
     void paint(juce::Graphics& graphics) override;

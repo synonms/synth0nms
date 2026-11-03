@@ -1,9 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "ui/AdsrComponent.h"
-#include "ui/FilterComponent.h"
-#include "ui/OscillatorComponent.h"
+#include "ui/SynthesiserComponent.h"
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
@@ -22,12 +20,8 @@ public:
 
 private:
     Synth0nmsAudioProcessor& m_audioProcessor;
-    AdsrComponent m_amplitudeAdsrComponent;
-    FilterComponent m_filterComponent;
-    OscillatorComponent m_oscillatorComponent;
-    AdsrComponent m_modulationAdsrComponent;
 
-    juce::MidiKeyboardComponent m_keyboardComponent;
+    SynthesiserComponent m_synthesiserComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessorEditor)
 };

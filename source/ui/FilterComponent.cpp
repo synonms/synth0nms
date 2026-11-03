@@ -1,16 +1,16 @@
 #include "FilterComponent.h"
 
-FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState)
+FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix)
     : juce::Component()
     , m_audioProcessorValueTreeState(audioProcessorValueTreeState)
 {
     juce::StringArray filterTypes { "lowpass", "bandpass", "highpass" };
     m_filterTypeComboBox.addItemList(filterTypes, 1);
     addAndMakeVisible(m_filterTypeComboBox);
-    m_filterTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessorValueTreeState, "FILTERTYPE", m_filterTypeComboBox);
+    m_filterTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessorValueTreeState, parameterPrefix + "TYPE", m_filterTypeComboBox);
 
-    setSliderParams(m_cutoffSlider, m_cutoffLabel, m_cutoffAttachment, "FILTERCUTOFF");
-    setSliderParams(m_resonanceSlider, m_resonanceLabel, m_resonanceAttachment, "FILTERRES");
+    setSliderParams(m_cutoffSlider, m_cutoffLabel, m_cutoffAttachment, parameterPrefix + "CUTOFF");
+    setSliderParams(m_resonanceSlider, m_resonanceLabel, m_resonanceAttachment, parameterPrefix + "RES");
 }
 
 FilterComponent::~FilterComponent() = default;

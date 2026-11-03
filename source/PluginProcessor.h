@@ -3,33 +3,22 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
 
-#include "WaveTableSynth.h"
+#include "processing/Synthesiser.h"
 
-//==============================================================================
-/**
-*/
 class Synth0nmsAudioProcessor : public juce::AudioProcessor
 {
 public:
-    //==============================================================================
     Synth0nmsAudioProcessor();
     ~Synth0nmsAudioProcessor() override;
 
-    //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-   #ifndef JucePlugin_PreferredChannelConfigurations
-    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
-   #endif
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
-    //==============================================================================
-    juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
 
-    //==============================================================================
     const juce::String getName() const override;
 
     bool acceptsMidi() const override;
@@ -37,27 +26,36 @@ public:
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
 
-    //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
     void setCurrentProgram (int index) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
 
-    //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    juce::MidiKeyboardState keyboardState;
-    juce::AudioProcessorValueTreeState audioProcessorValueTreeState;
+    juce::AudioProcessorValueTreeState& getValueTreeState()
+    {
+        return m_valueTreeState;
+    }
+
+    juce::MidiKeyboardState& getKeyboardState()
+    {
+        return m_keyboardState;
+    }
+
+protected:
+#ifndef JucePlugin_PreferredChannelConfigurations
+    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
+#endif
 
 private:
-    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Synth0nmsAudioProcessor)
 
-    juce::AudioProcessorValueTreeState::ParameterLayout createParams();
+    juce::AudioProcessorEditor* createEditor() override;
 
-//    WaveTableSynth m_waveTableSynth;
-
-    juce::Synthesiser m_synth; // Move to SynoSynth class
+    Synthesiser m_synth;
+    juce::AudioProcessorValueTreeState m_valueTreeState;
+    juce::MidiKeyboardState m_keyboardState;
 };
