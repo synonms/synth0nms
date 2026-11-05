@@ -5,7 +5,7 @@
 Synth0nmsAudioProcessorEditor::Synth0nmsAudioProcessorEditor (Synth0nmsAudioProcessor& audioProcessor)
     : AudioProcessorEditor (&audioProcessor)
     , m_audioProcessor (audioProcessor)
-    , m_synthesiserComponent (audioProcessor.getValueTreeState(), audioProcessor.getKeyboardState())
+    , m_synthesiserComponent (audioProcessor.getStateParameters(), audioProcessor.getKeyboardState())
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.

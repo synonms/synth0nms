@@ -3,28 +3,25 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_audio_utils/juce_audio_utils.h>
 
+#include "../StateParameters.h"
+
 class FilterComponent : public juce::Component
 {
 public:
-    FilterComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix);
+    FilterComponent(StateParameters& stateParameters, const std::string& parameterPrefix);
     ~FilterComponent() override;
 
     void paint(juce::Graphics& graphics) override;
     void resized() override;
 
 private:
-    juce::AudioProcessorValueTreeState& m_audioProcessorValueTreeState;
-
     juce::ComboBox m_filterTypeComboBox;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> m_filterTypeAttachment;
 
     juce::Slider m_cutoffSlider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_cutoffAttachment;
     juce::Label m_cutoffLabel {"CUTOFFLABEL", "Cutoff"};
 
     juce::Slider m_resonanceSlider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_resonanceAttachment;
     juce::Label m_resonanceLabel {"RESONANCELABEL", "Resonance"};
 
-    void setSliderParams(juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, const std::string& parameterId);
+    void setSliderParams(juce::Slider& slider, juce::Label& label);
 };

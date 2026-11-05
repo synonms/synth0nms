@@ -1,13 +1,13 @@
 #include "SynthesiserComponent.h"
 
-SynthesiserComponent::SynthesiserComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, juce::MidiKeyboardState& keyboardState)
-    : m_oscillator1Component (audioProcessorValueTreeState, "OSC1")
-    , m_oscillator2Component (audioProcessorValueTreeState, "OSC2")
-    , m_oscillator3Component (audioProcessorValueTreeState, "OSC3")
-    , m_modulationAdsrComponent (audioProcessorValueTreeState, "MOD")
-    , m_filter1Component (audioProcessorValueTreeState, "FILTER1")
-    , m_filter2Component (audioProcessorValueTreeState, "FILTER2")
-    , m_amplitudeAdsrComponent (audioProcessorValueTreeState, "AMP")
+SynthesiserComponent::SynthesiserComponent(StateParameters& stateParameters, juce::MidiKeyboardState& keyboardState)
+    : m_oscillator1Component (stateParameters, "OSC1")
+    , m_oscillator2Component (stateParameters, "OSC2")
+    , m_oscillator3Component (stateParameters, "OSC3")
+    , m_modulationAdsrComponent (stateParameters, "MOD")
+    , m_filter1Component (stateParameters, "FILTER1")
+    , m_filter2Component (stateParameters, "FILTER2")
+    , m_amplitudeAdsrComponent (stateParameters, "AMP")
     , m_keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     addAndMakeVisible(m_oscillator1Component);

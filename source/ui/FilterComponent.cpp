@@ -1,16 +1,22 @@
 #include "FilterComponent.h"
 
-FilterComponent::FilterComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix)
-    : juce::Component()
-    , m_audioProcessorValueTreeState(audioProcessorValueTreeState)
+FilterComponent::FilterComponent(StateParameters& stateParameters, const std::string& parameterPrefix)
 {
+    stateParameters.addChoiceParameter(parameterPrefix + "TYPE", "Filter Type", juce::StringArray { "lowpass", "bandpass", "highpass" }, 0);
+    stateParameters.addFloatParameter(parameterPrefix + "CUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 0 );
+    stateParameters.addFloatParameter(parameterPrefix + "RES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f }, 1.0f );
+
+    stateParameters.addComboBoxAttachment(parameterPrefix + "TYPE", m_filterTypeComboBox);
+    stateParameters.addSliderAttachment(parameterPrefix + "CUTOFF", m_cutoffSlider);
+    stateParameters.addSliderAttachment(parameterPrefix + "RES", m_resonanceSlider);
+
+
     juce::StringArray filterTypes { "lowpass", "bandpass", "highpass" };
     m_filterTypeComboBox.addItemList(filterTypes, 1);
     addAndMakeVisible(m_filterTypeComboBox);
-    m_filterTypeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessorValueTreeState, parameterPrefix + "TYPE", m_filterTypeComboBox);
 
-    setSliderParams(m_cutoffSlider, m_cutoffLabel, m_cutoffAttachment, parameterPrefix + "CUTOFF");
-    setSliderParams(m_resonanceSlider, m_resonanceLabel, m_resonanceAttachment, parameterPrefix + "RES");
+    setSliderParams(m_cutoffSlider, m_cutoffLabel);
+    setSliderParams(m_resonanceSlider, m_resonanceLabel);
 }
 
 FilterComponent::~FilterComponent() = default;
@@ -45,7 +51,7 @@ void FilterComponent::resized()
     m_resonanceSlider.setBounds (m_resonanceLabel.getX(), m_resonanceLabel.getBottom() + padding, fmBlockWidth, fmDialHeight);
 }
 
-void FilterComponent::setSliderParams(juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, const std::string& parameterId)
+void FilterComponent::setSliderParams(juce::Slider& slider, juce::Label& label)
 {
     slider.setSliderStyle (juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
@@ -54,6 +60,4 @@ void FilterComponent::setSliderParams(juce::Slider& slider, juce::Label& label, 
     label.setColour (juce::Label::ColourIds::textColourId, juce::Colours::black);
     label.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(label);
-
-    attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, parameterId, slider);
 }

@@ -14,7 +14,8 @@ Synth0nmsAudioProcessor::Synth0nmsAudioProcessor()
                       #endif
                       #endif
                       )
-    , m_valueTreeState (*this, nullptr, "Parameters", Synthesiser::createParameters())
+    , m_stateParameters(*this)
+    , m_synth(m_stateParameters)
 #endif
 {
 }
@@ -131,7 +132,7 @@ void Synth0nmsAudioProcessor::processBlock (juce::AudioBuffer<float>& audioBuffe
     // Inject virtual keyboard events into the MIDI buffer
     m_keyboardState.processNextMidiBuffer (midiBuffer, 0, audioBuffer.getNumSamples(), true);
 
-    m_synth.processBlock(audioBuffer, midiBuffer, m_valueTreeState);
+    m_synth.processBlock(audioBuffer, midiBuffer);
 }
 
 //==============================================================================

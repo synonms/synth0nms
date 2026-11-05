@@ -4,10 +4,12 @@
 #include "FilterComponent.h"
 #include "OscillatorComponent.h"
 
-class SynthesiserComponent: public juce::Component
+#include "../StateParameters.h"
+
+class SynthesiserComponent : public juce::Component
 {
 public:
-    SynthesiserComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, juce::MidiKeyboardState& keyboardState);
+    SynthesiserComponent(StateParameters& stateParameters, juce::MidiKeyboardState& keyboardState);
     ~SynthesiserComponent() override = default;
 
     void paint(juce::Graphics& graphics) override;

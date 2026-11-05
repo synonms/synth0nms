@@ -1,13 +1,16 @@
 #include "AdsrComponent.h"
 
-AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix)
-    : juce::Component()
-    , m_audioProcessorValueTreeState(audioProcessorValueTreeState)
+AdsrComponent::AdsrComponent(StateParameters& stateParameters, const juce::String& parameterPrefix)
 {
-    m_attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, parameterPrefix + "ATTACK", m_attackSlider);
-    m_decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, parameterPrefix + "DECAY", m_decaySlider);
-    m_sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, parameterPrefix + "SUSTAIN", m_sustainSlider);
-    m_releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, parameterPrefix + "RELEASE", m_releaseSlider);
+    stateParameters.addFloatParameter(parameterPrefix + "ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f );
+    stateParameters.addFloatParameter(parameterPrefix + "DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f }, 0.1f );
+    stateParameters.addFloatParameter(parameterPrefix + "SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f }, 1.0f );
+    stateParameters.addFloatParameter(parameterPrefix + "RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f }, 0.4f );
+
+    stateParameters.addSliderAttachment(parameterPrefix + "ATTACK", m_attackSlider);
+    stateParameters.addSliderAttachment(parameterPrefix + "DECAY", m_decaySlider);
+    stateParameters.addSliderAttachment(parameterPrefix + "SUSTAIN", m_sustainSlider);
+    stateParameters.addSliderAttachment(parameterPrefix + "RELEASE", m_releaseSlider);
 
     setSliderParams(m_attackSlider);
     setSliderParams(m_decaySlider);
@@ -20,6 +23,7 @@ AdsrComponent::~AdsrComponent() = default;
 void AdsrComponent::paint(juce::Graphics& graphics)
 {
     graphics.fillAll(juce::Colours::ivory);
+    setSliderParams(m_attackSlider);
 }
 
 void AdsrComponent::resized()

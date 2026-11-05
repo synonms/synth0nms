@@ -35,9 +35,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    juce::AudioProcessorValueTreeState& getValueTreeState()
+    StateParameters& getStateParameters()
     {
-        return m_valueTreeState;
+        return m_stateParameters;
     }
 
     juce::MidiKeyboardState& getKeyboardState()
@@ -55,7 +55,7 @@ private:
 
     juce::AudioProcessorEditor* createEditor() override;
 
+    StateParameters m_stateParameters;
     Synthesiser m_synth;
-    juce::AudioProcessorValueTreeState m_valueTreeState;
     juce::MidiKeyboardState m_keyboardState;
 };

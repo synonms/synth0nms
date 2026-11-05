@@ -1,16 +1,21 @@
 #include "OscillatorComponent.h"
 
-OscillatorComponent::OscillatorComponent(juce::AudioProcessorValueTreeState& audioProcessorValueTreeState, const std::string& parameterPrefix)
-    : juce::Component()
-    , m_audioProcessorValueTreeState(audioProcessorValueTreeState)
+OscillatorComponent::OscillatorComponent(StateParameters& stateParameters, const std::string& parameterPrefix)
 {
+    stateParameters.addChoiceParameter(parameterPrefix + "FUNCTION", "Oscillator Function", juce::StringArray { "Sine", "Saw", "Square" }, 0);
+    stateParameters.addFloatParameter(parameterPrefix + "FMFREQ", "FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 5.0f );
+    stateParameters.addFloatParameter(parameterPrefix + "FMDEPTH", "FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 500.0f );
+
+    stateParameters.addComboBoxAttachment(parameterPrefix + "FUNCTION", m_functionComboBox);
+    stateParameters.addSliderAttachment(parameterPrefix + "FMFREQ", m_fmFrequencySlider);
+    stateParameters.addSliderAttachment(parameterPrefix + "FMDEPTH", m_fmDepthSlider);
+
     juce::StringArray functions { "Sine", "Saw", "Square" };
     m_functionComboBox.addItemList(functions, 1);
     addAndMakeVisible(m_functionComboBox);
-    m_functionAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessorValueTreeState, parameterPrefix + "FUNCTION", m_functionComboBox);
 
-    setSliderParams(m_fmFrequencySlider, m_fmFrequencyLabel, m_fmFrequencyAttachment, parameterPrefix + "FMFREQ");
-    setSliderParams(m_fmDepthSlider, m_fmDepthLabel, m_fmDepthAttachment, parameterPrefix + "FMDEPTH");
+    setSliderParams(m_fmFrequencySlider, m_fmFrequencyLabel);
+    setSliderParams(m_fmDepthSlider, m_fmDepthLabel);
 }
 
 OscillatorComponent::~OscillatorComponent() = default;
@@ -45,7 +50,7 @@ void OscillatorComponent::resized()
     m_fmDepthSlider.setBounds (m_fmDepthLabel.getX(), m_fmDepthLabel.getBottom() + padding, fmBlockWidth, fmDialHeight);
 }
 
-void OscillatorComponent::setSliderParams(juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, const std::string& parameterId)
+void OscillatorComponent::setSliderParams(juce::Slider& slider, juce::Label& label)
 {
     slider.setSliderStyle (juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
@@ -54,6 +59,4 @@ void OscillatorComponent::setSliderParams(juce::Slider& slider, juce::Label& lab
     label.setColour (juce::Label::ColourIds::textColourId, juce::Colours::black);
     label.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(label);
-
-    attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(m_audioProcessorValueTreeState, parameterId, slider);
 }
