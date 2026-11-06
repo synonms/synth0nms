@@ -2,21 +2,20 @@
 
 FilterComponent::FilterComponent(StateParameters& stateParameters, const std::string& parameterPrefix)
 {
-    stateParameters.addChoiceParameter(parameterPrefix + "TYPE", "Filter Type", juce::StringArray { "lowpass", "bandpass", "highpass" }, 0);
-    stateParameters.addFloatParameter(parameterPrefix + "CUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 0 );
-    stateParameters.addFloatParameter(parameterPrefix + "RES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f }, 1.0f );
-
-    stateParameters.addComboBoxAttachment(parameterPrefix + "TYPE", m_filterTypeComboBox);
-    stateParameters.addSliderAttachment(parameterPrefix + "CUTOFF", m_cutoffSlider);
-    stateParameters.addSliderAttachment(parameterPrefix + "RES", m_resonanceSlider);
-
-
     juce::StringArray filterTypes { "lowpass", "bandpass", "highpass" };
     m_filterTypeComboBox.addItemList(filterTypes, 1);
     addAndMakeVisible(m_filterTypeComboBox);
 
     setSliderParams(m_cutoffSlider, m_cutoffLabel);
     setSliderParams(m_resonanceSlider, m_resonanceLabel);
+
+    stateParameters.addChoiceParameter(parameterPrefix + "TYPE", "Filter Type", juce::StringArray { "lowpass", "bandpass", "highpass" }, 0);
+    stateParameters.addFloatParameter(parameterPrefix + "CUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 0 );
+    stateParameters.addFloatParameter(parameterPrefix + "RES", "Filter Resonance", juce::NormalisableRange<float> { 1.0f, 10.0f, 0.1f }, 1.0f );
+
+    stateParameters.registerComboBoxAttachment(parameterPrefix + "TYPE", m_filterTypeComboBox);
+    stateParameters.registerSliderAttachment(parameterPrefix + "CUTOFF", m_cutoffSlider);
+    stateParameters.registerSliderAttachment(parameterPrefix + "RES", m_resonanceSlider);
 }
 
 FilterComponent::~FilterComponent() = default;

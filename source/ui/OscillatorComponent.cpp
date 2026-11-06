@@ -2,20 +2,20 @@
 
 OscillatorComponent::OscillatorComponent(StateParameters& stateParameters, const std::string& parameterPrefix)
 {
-    stateParameters.addChoiceParameter(parameterPrefix + "FUNCTION", "Oscillator Function", juce::StringArray { "Sine", "Saw", "Square" }, 0);
-    stateParameters.addFloatParameter(parameterPrefix + "FMFREQ", "FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 5.0f );
-    stateParameters.addFloatParameter(parameterPrefix + "FMDEPTH", "FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 500.0f );
-
-    stateParameters.addComboBoxAttachment(parameterPrefix + "FUNCTION", m_functionComboBox);
-    stateParameters.addSliderAttachment(parameterPrefix + "FMFREQ", m_fmFrequencySlider);
-    stateParameters.addSliderAttachment(parameterPrefix + "FMDEPTH", m_fmDepthSlider);
-
     juce::StringArray functions { "Sine", "Saw", "Square" };
     m_functionComboBox.addItemList(functions, 1);
     addAndMakeVisible(m_functionComboBox);
 
     setSliderParams(m_fmFrequencySlider, m_fmFrequencyLabel);
     setSliderParams(m_fmDepthSlider, m_fmDepthLabel);
+
+    stateParameters.addChoiceParameter(parameterPrefix + "FUNCTION", "Oscillator Function", juce::StringArray { "Sine", "Saw", "Square" }, 0);
+    stateParameters.addFloatParameter(parameterPrefix + "FMFREQ", "FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 5.0f );
+    stateParameters.addFloatParameter(parameterPrefix + "FMDEPTH", "FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 500.0f );
+
+    stateParameters.registerComboBoxAttachment(parameterPrefix + "FUNCTION", m_functionComboBox);
+    stateParameters.registerSliderAttachment(parameterPrefix + "FMFREQ", m_fmFrequencySlider);
+    stateParameters.registerSliderAttachment(parameterPrefix + "FMDEPTH", m_fmDepthSlider);
 }
 
 OscillatorComponent::~OscillatorComponent() = default;

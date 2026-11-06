@@ -75,7 +75,7 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int st
     juce::dsp::ProcessContextReplacing<float> context(audioBlock);
 
     // Apply Modulation ADSR before any data has been written (prepares the ADSR)
-    m_modulationAdsr.applyToBuffer(outputBuffer, startSample, numSamples);
+//    m_modulationAdsr.applyToBuffer(outputBuffer, startSample, numSamples);
 
     // Write oscillator waves to audio buffer
     m_oscillator1.renderNextBlock(context);
@@ -86,8 +86,8 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int st
     m_amplitudeAdsr.applyToBuffer(outputBuffer, startSample, numSamples);
 
     // Apply filters
-    m_filter1.renderNextBlock(context);
-    m_filter2.renderNextBlock(context);
+//    m_filter1.renderNextBlock(context);
+//    m_filter2.renderNextBlock(context);
 
     // Bring down gain to avoid blowing ear drums
     m_gain.process(context);

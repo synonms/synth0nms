@@ -143,7 +143,11 @@ bool Synth0nmsAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* Synth0nmsAudioProcessor::createEditor()
 {
-    return new Synth0nmsAudioProcessorEditor (*this);
+    juce::AudioProcessorEditor* editor = new Synth0nmsAudioProcessorEditor (*this);
+
+    m_stateParameters.build();
+
+    return editor;
 }
 
 //==============================================================================
