@@ -1,10 +1,10 @@
 #include "SynthesiserComponent.h"
 
 SynthesiserComponent::SynthesiserComponent(StateParameters& stateParameters, juce::MidiKeyboardState& keyboardState)
-    : m_oscillator1Component (stateParameters, "OSC1")
-    , m_oscillator2Component (stateParameters, "OSC2")
-    , m_oscillator3Component (stateParameters, "OSC3")
-    , m_modulationAdsrComponent (stateParameters, "MOD")
+    : m_oscillator1Component (stateParameters, "OSC1", true)
+    , m_oscillator2Component (stateParameters, "OSC2", false)
+    , m_oscillator3Component (stateParameters, "OSC3", false)
+    , m_modulationOscillatorComponent (stateParameters, "MODOSC1")
     , m_filter1Component (stateParameters, "FILTER1")
     , m_filter2Component (stateParameters, "FILTER2")
     , m_amplitudeAdsrComponent (stateParameters, "AMP")
@@ -13,7 +13,7 @@ SynthesiserComponent::SynthesiserComponent(StateParameters& stateParameters, juc
     addAndMakeVisible(m_oscillator1Component);
     addAndMakeVisible(m_oscillator2Component);
     addAndMakeVisible(m_oscillator3Component);
-    addAndMakeVisible(m_modulationAdsrComponent);
+    addAndMakeVisible(m_modulationOscillatorComponent);
 
     addAndMakeVisible(m_filter1Component);
     addAndMakeVisible(m_filter2Component);
@@ -37,12 +37,12 @@ void SynthesiserComponent::resized()
     m_oscillator1Component.setBounds (0, 0, sidePanelWidth, panelHeight);
     m_oscillator2Component.setBounds (0, m_oscillator1Component.getBottom(), sidePanelWidth, panelHeight);
     m_oscillator3Component.setBounds (0, m_oscillator2Component.getBottom(), sidePanelWidth, panelHeight);
-    m_modulationAdsrComponent.setBounds (0, m_oscillator3Component.getBottom(), sidePanelWidth, panelHeight);
+    m_modulationOscillatorComponent.setBounds (0, m_oscillator3Component.getBottom(), sidePanelWidth, panelHeight);
 
     m_filter1Component.setBounds(m_oscillator1Component.getRight(), 0, midPanelWidth, panelHeight);
     m_filter2Component.setBounds(m_oscillator1Component.getRight(), m_filter1Component.getBottom(), midPanelWidth, panelHeight);
 
     m_amplitudeAdsrComponent.setBounds (m_oscillator1Component.getRight(), m_filter2Component.getBottom(), midPanelWidth, panelHeight * 2);
 
-    m_keyboardComponent.setBounds(0, m_modulationAdsrComponent.getBottom(), getWidth(), panelHeight);
+    m_keyboardComponent.setBounds(0, m_modulationOscillatorComponent.getBottom(), getWidth(), panelHeight);
 }

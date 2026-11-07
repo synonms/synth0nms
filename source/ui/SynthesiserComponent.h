@@ -3,6 +3,7 @@
 #include "AdsrComponent.h"
 #include "FilterComponent.h"
 #include "OscillatorComponent.h"
+#include "ModulationOscillatorComponent.h"
 
 #include "../StateParameters.h"
 
@@ -19,7 +20,7 @@ private:
     OscillatorComponent m_oscillator1Component;
     OscillatorComponent m_oscillator2Component;
     OscillatorComponent m_oscillator3Component;
-    AdsrComponent m_modulationAdsrComponent;
+    ModulationOscillatorComponent m_modulationOscillatorComponent;
     FilterComponent m_filter1Component;
     FilterComponent m_filter2Component;
     AdsrComponent m_amplitudeAdsrComponent;

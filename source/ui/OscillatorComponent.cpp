@@ -1,24 +1,34 @@
 #include "OscillatorComponent.h"
 
-OscillatorComponent::OscillatorComponent(StateParameters& stateParameters, const std::string& parameterPrefix)
+OscillatorComponent::OscillatorComponent(StateParameters& stateParameters, const std::string& parameterPrefix, const bool isEnabledByDefault)
 {
-    juce::StringArray functions { "Sine", "Saw", "Square" };
+    m_enabledButton.setClickingTogglesState(true);
+    m_enabledButton.setButtonText("Bypass");
+    addAndMakeVisible(m_enabledButton);
+
+    const juce::StringArray functions { "Sine", "Saw", "Square", "Triangle", "Pulse" };
     m_functionComboBox.addItemList(functions, 1);
     addAndMakeVisible(m_functionComboBox);
+    m_blendFunctionComboBox.addItemList(functions, 1);
+    addAndMakeVisible(m_blendFunctionComboBox);
 
-    setSliderParams(m_fmFrequencySlider, m_fmFrequencyLabel);
-    setSliderParams(m_fmDepthSlider, m_fmDepthLabel);
+    m_blendRatioSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+    m_blendRatioSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    addAndMakeVisible(m_blendRatioSlider);
 
-    stateParameters.addChoiceParameter(parameterPrefix + "FUNCTION", "Oscillator Function", juce::StringArray { "Sine", "Saw", "Square" }, 0);
-    stateParameters.addFloatParameter(parameterPrefix + "FMFREQ", "FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 5.0f );
-    stateParameters.addFloatParameter(parameterPrefix + "FMDEPTH", "FM Depth", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.01f, 0.3f }, 500.0f );
+    stateParameters.addBoolParameter(parameterPrefix + "ENABLED", "Enabled", isEnabledByDefault);
+    stateParameters.addChoiceParameter(parameterPrefix + "FUNCTION", "Oscillator Function", functions, 0);
+    stateParameters.addChoiceParameter(parameterPrefix + "BLENDFUNCTION", "Blend Function", functions, 0);
+    stateParameters.addFloatParameter(parameterPrefix + "BLENDRATIO", "Blend Ratio", {0.0f, 1.0f, 0.1f}, 0.0f);
 
+    stateParameters.registerTextButtonAttachment(parameterPrefix + "ENABLED", m_enabledButton);
     stateParameters.registerComboBoxAttachment(parameterPrefix + "FUNCTION", m_functionComboBox);
-    stateParameters.registerSliderAttachment(parameterPrefix + "FMFREQ", m_fmFrequencySlider);
-    stateParameters.registerSliderAttachment(parameterPrefix + "FMDEPTH", m_fmDepthSlider);
+    stateParameters.registerComboBoxAttachment(parameterPrefix + "BLENDFUNCTION", m_blendFunctionComboBox);
+    stateParameters.registerSliderAttachment(parameterPrefix + "BLENDRATIO", m_blendRatioSlider);
 }
 
 OscillatorComponent::~OscillatorComponent() = default;
+
 
 void OscillatorComponent::paint(juce::Graphics& graphics)
 {
@@ -29,34 +39,25 @@ void OscillatorComponent::paint(juce::Graphics& graphics)
 
 void OscillatorComponent::resized()
 {
-    const juce::Rectangle<int> bounds = getLocalBounds().reduced(10);
+    // |PPPPPPPPPPPPPPP|
+    // |P x P xx P xx P|
+    // |PPPPPPPPPPPPPPP|
+    // |P o P ooooooo P|
+    // |P o P ooooooo P|
+    // |P o P ooooooo P|
+    // |PPPPPPPPPPPPPPP|
+
     const int padding = 10;
-    const int width = bounds.getWidth() - (padding * 2);
-    const int height = 40;
-    const int x = 0 + padding;
-    const int y = 0 + padding;
+    const int availableWidth = getLocalBounds().getWidth() - (padding * 2);
+    const int availableHeight = getLocalBounds().getHeight() - (padding * 2);
+    const int headerHeight = availableHeight / 4;
+    const int bodyHeight = availableHeight - headerHeight - padding;
+    const int contentWidth = availableWidth - (padding * 2);
+    const int blockWidth = contentWidth / 5;
 
-    m_functionComboBox.setBounds (x, y, width, height);
+    m_enabledButton.setBounds(padding, padding, blockWidth, headerHeight);
+    m_functionComboBox.setBounds (m_enabledButton.getRight() + padding, padding, blockWidth * 2, headerHeight);
+    m_blendFunctionComboBox.setBounds (m_functionComboBox.getRight() + padding, padding, blockWidth * 2, headerHeight);
 
-    const int fmBlockTop = m_functionComboBox.getBottom() + padding;
-    const int fmBlockWidth = 200;
-    const int fmLabelHeight = 40;
-    const int fmDialHeight = 100;
-
-    m_fmFrequencyLabel.setBounds (x, fmBlockTop, fmBlockWidth, fmLabelHeight);
-    m_fmFrequencySlider.setBounds (m_fmFrequencyLabel.getX(), m_fmFrequencyLabel.getBottom() + padding, fmBlockWidth, fmDialHeight);
-
-    m_fmDepthLabel.setBounds (m_fmFrequencyLabel.getRight() + padding, fmBlockTop, fmBlockWidth, fmLabelHeight);
-    m_fmDepthSlider.setBounds (m_fmDepthLabel.getX(), m_fmDepthLabel.getBottom() + padding, fmBlockWidth, fmDialHeight);
-}
-
-void OscillatorComponent::setSliderParams(juce::Slider& slider, juce::Label& label)
-{
-    slider.setSliderStyle (juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-    addAndMakeVisible(slider);
-
-    label.setColour (juce::Label::ColourIds::textColourId, juce::Colours::black);
-    label.setJustificationType(juce::Justification::centred);
-    addAndMakeVisible(label);
+    m_blendRatioSlider.setBounds (m_functionComboBox.getX(), m_blendFunctionComboBox.getBottom() + padding, m_functionComboBox.getWidth() + m_blendFunctionComboBox.getWidth() + padding, bodyHeight);
 }
