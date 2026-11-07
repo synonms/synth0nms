@@ -8,7 +8,7 @@
 //==============================================================================
 /**
 */
-class Synth0nmsAudioProcessorEditor : public juce::AudioProcessorEditor
+class Synth0nmsAudioProcessorEditor : public juce::AudioProcessorEditor, juce::Timer
 {
 public:
     Synth0nmsAudioProcessorEditor (Synth0nmsAudioProcessor&);
@@ -17,6 +17,7 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    void timerCallback() override;
 
 private:
     Synth0nmsAudioProcessor& m_audioProcessor;

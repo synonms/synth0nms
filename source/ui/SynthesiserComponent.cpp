@@ -8,6 +8,8 @@ SynthesiserComponent::SynthesiserComponent(StateParameters& stateParameters, juc
     , m_filter1Component (stateParameters, "FILTER1")
     , m_filter2Component (stateParameters, "FILTER2")
     , m_amplitudeAdsrComponent (stateParameters, "AMP")
+    , m_meterLeftComponent (stateParameters, "METERL")
+    , m_meterRightComponent (stateParameters, "METERR")
     , m_keyboardComponent (keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     addAndMakeVisible(m_oscillator1Component);
@@ -19,6 +21,9 @@ SynthesiserComponent::SynthesiserComponent(StateParameters& stateParameters, juc
     addAndMakeVisible(m_filter2Component);
 
     addAndMakeVisible(m_amplitudeAdsrComponent);
+
+    addAndMakeVisible(m_meterLeftComponent);
+    addAndMakeVisible(m_meterRightComponent);
 
     addAndMakeVisible(m_keyboardComponent);
 }
@@ -42,7 +47,24 @@ void SynthesiserComponent::resized()
     m_filter1Component.setBounds(m_oscillator1Component.getRight(), 0, midPanelWidth, panelHeight);
     m_filter2Component.setBounds(m_oscillator1Component.getRight(), m_filter1Component.getBottom(), midPanelWidth, panelHeight);
 
+    m_meterLeftComponent.setBounds(m_filter1Component.getRight(), 0, sidePanelWidth, panelHeight / 2);
+    m_meterRightComponent.setBounds(m_filter1Component.getRight(), m_meterLeftComponent.getBottom(), sidePanelWidth, panelHeight / 2);
+
     m_amplitudeAdsrComponent.setBounds (m_oscillator1Component.getRight(), m_filter2Component.getBottom(), midPanelWidth, panelHeight * 2);
 
     m_keyboardComponent.setBounds(0, m_modulationOscillatorComponent.getBottom(), getWidth(), panelHeight);
+}
+
+void SynthesiserComponent::setRmsLevelInDecibels(const int channel, const float rmsLevelInDecibels)
+{
+    if (channel == 0)
+    {
+        m_meterLeftComponent.setRmsLevelInDecibels(rmsLevelInDecibels);
+        m_meterLeftComponent.repaint();
+    }
+    else if (channel == 1)
+    {
+        m_meterRightComponent.setRmsLevelInDecibels(rmsLevelInDecibels);
+        m_meterRightComponent.repaint();
+    }
 }

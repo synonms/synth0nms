@@ -45,6 +45,11 @@ public:
         return m_keyboardState;
     }
 
+    float getRmsValue(const int channel) const
+    {
+        return m_synth.getRmsValue(channel);
+    }
+
 protected:
 #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
