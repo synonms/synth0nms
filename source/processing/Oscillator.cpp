@@ -4,27 +4,22 @@ Oscillator::Oscillator() : juce::dsp::Oscillator<float>([] (float x) { return st
 {
 }
 
-void Oscillator::disable()
+void Oscillator::apply(juce::AudioBuffer<float>& audioBuffer, const int startSample, const int numSamples)
 {
-    m_isEnabled = false;
+    if (!isEnabled) return;
+
+    juce::dsp::AudioBlock<float> audioBlock = juce::dsp::AudioBlock<float>(audioBuffer).getSubBlock(startSample, numSamples);
+    const juce::dsp::ProcessContextReplacing<float> context(audioBlock);
+
+    process(context);
 }
 
-void Oscillator::enable()
-{
-    m_isEnabled = true;
-}
-
-void Oscillator::prepareToPlay(const juce::dsp::ProcessSpec& processSpec)
+void Oscillator::initialise(const juce::dsp::ProcessSpec& processSpec)
 {
     prepare(processSpec);
 }
 
-void Oscillator::renderNextBlock(const juce::dsp::ProcessContextReplacing<float>& context)
-{
-    if (!m_isEnabled) return;
 
-    process(context);
-}
 
 void Oscillator::setBlendFunctionType(const OscillatorFunctionType &functionType)
 {
@@ -62,5 +57,5 @@ void Oscillator::updateFunction()
         const float b = m_blendFunction(x) * m_blendRatio;
         return a + b;
     };
-    initialise(function);
+    juce::dsp::Oscillator<float>::initialise(function);
 }

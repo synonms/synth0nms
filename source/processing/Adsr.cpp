@@ -1,6 +1,13 @@
 #include "Adsr.h"
 
-void Adsr::prepareToPlay(const juce::dsp::ProcessSpec &processSpec)
+void Adsr::apply(juce::AudioBuffer<float>& audioBuffer, const int startSample, const int numSamples)
+{
+    if (!isEnabled) return;
+
+    applyEnvelopeToBuffer(audioBuffer, startSample, numSamples);
+}
+
+void Adsr::initialise(const juce::dsp::ProcessSpec& processSpec)
 {
     setSampleRate(processSpec.sampleRate);
 }
@@ -23,9 +30,4 @@ void Adsr::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound 
 void Adsr::stopNote(float velocity, bool allowTailOff)
 {
     noteOff();
-}
-
-void Adsr::applyToBuffer(juce::AudioBuffer<float>& outputBuffer, const int startSample, const int numSamples)
-{
-    applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
 }

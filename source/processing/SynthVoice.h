@@ -5,7 +5,6 @@
 
 #include "Adsr.h"
 #include "Filter.h"
-#include "ModulationOscillator.h"
 #include "Oscillator.h"
 
 class SynthVoice : public juce::SynthesiserVoice
@@ -28,23 +27,20 @@ public:
     void updateOscillator2(bool isEnabled, const OscillatorFunctionType& functionType, const OscillatorFunctionType& blendFunctionType, float blendRatio);
     void updateOscillator3(bool isEnabled, const OscillatorFunctionType& functionType, const OscillatorFunctionType& blendFunctionType, float blendRatio);
 
-    void updateModulationOscillator(bool isEnabled, const OscillatorFunctionType& functionType);
-
-    // Amplitude ADSR controls
-    void updateAmplitudeAdsr(float attack, float decay, float sustain, float release);
-
     // Filter controls
     void updateFilter1(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance);
     void updateFilter2(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance);
+
+    // Amplitude ADSR controls
+    void updateAmplitudeAdsr(float attack, float decay, float sustain, float release);
 
 private:
     Oscillator m_oscillator1;
     Oscillator m_oscillator2;
     Oscillator m_oscillator3;
-    ModulationOscillator m_modulationOscillator;
-    Adsr m_amplitudeAdsr;
     Filter m_filter1;
     Filter m_filter2;
+    Adsr m_amplitudeAdsr;
 
     juce::dsp::Gain<float> m_gain;
 };

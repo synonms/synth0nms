@@ -1,14 +1,19 @@
 #include "Filter.h"
 
-void Filter::prepareToPlay (const juce::dsp::ProcessSpec& processSpec)
+void Filter::apply(juce::AudioBuffer<float> &audioBuffer, int startSample, int numSamples)
+{
+    if (!isEnabled) return;
+
+    juce::dsp::AudioBlock<float> audioBlock = juce::dsp::AudioBlock<float>(audioBuffer).getSubBlock(startSample, numSamples);
+    const juce::dsp::ProcessContextReplacing<float> context(audioBlock);
+
+    m_filter.process(context);
+}
+
+void Filter::initialise(const juce::dsp::ProcessSpec &processSpec)
 {
     m_filter.reset();
     m_filter.prepare(processSpec);
-}
-
-void Filter::renderNextBlock(juce::dsp::ProcessContextReplacing<float>& context)
-{
-    m_filter.process(context);
 }
 
 void Filter::updateParameters(const juce::dsp::StateVariableTPTFilterType& type, const float cutoffFrequency, const float resonance, const float modulator)

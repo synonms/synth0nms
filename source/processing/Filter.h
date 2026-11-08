@@ -2,11 +2,17 @@
 
 #include <juce_dsp/juce_dsp.h>
 
-class Filter
+#include "ISoundModule.h"
+
+class Filter : public ISoundModule
 {
 public:
-    void prepareToPlay (const juce::dsp::ProcessSpec& processSpec);
-    void renderNextBlock(juce::dsp::ProcessContextReplacing<float>& context);
+    virtual ~Filter() = default;
+
+    // ISoundModule
+    void apply(juce::AudioBuffer<float>& audioBuffer, int startSample, int numSamples) override;
+    void initialise(const juce::dsp::ProcessSpec& processSpec) override;
+
     void updateParameters(const juce::dsp::StateVariableTPTFilterType& type, float cutoffFrequency, float resonance, float modulator = 1.0f);
     void reset();
 

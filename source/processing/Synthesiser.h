@@ -3,6 +3,7 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 
 #include "../StateParameters.h"
+#include "CircularBuffer.h"
 
 class Synthesiser : public juce::Synthesiser
 {
@@ -21,6 +22,7 @@ public:
 
 private:
     StateParameters& m_stateParameters;
+    CircularBuffer m_circularBuffer;
     juce::LinearSmoothedValue<float> m_rmsLevelsInDecibels[2] { -60.f, -60.f };
 };
 

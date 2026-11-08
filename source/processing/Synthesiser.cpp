@@ -14,6 +14,10 @@ Synthesiser::Synthesiser(StateParameters& stateParameters)
 
 void Synthesiser::initialise (const double sampleRate, const int samplesPerBlock, int numOutputChannels)
 {
+    // Allow for 2 seconds of buffer "memory"
+    const int circularBufferSize = static_cast<int>(sampleRate) * 2;
+    m_circularBuffer.setSize(numOutputChannels, circularBufferSize);
+
     setCurrentPlaybackSampleRate(sampleRate);
 
     for (int i = 0; i < getNumVoices(); ++i) {
@@ -68,16 +72,17 @@ void Synthesiser::processBlock (juce::AudioBuffer<float>& audioBuffer, const juc
             voice->updateOscillator2(osc2Enabled, osc2FunctionType, osc2BlendFunctionType, osc2BlendRatio);
             voice->updateOscillator3(osc3Enabled, osc3FunctionType, osc3BlendFunctionType, osc3BlendRatio);
 
-            voice->updateModulationOscillator(modulationOscEnabled, modulationOscFunctionType);
-
-            voice->updateAmplitudeAdsr(ampAttack, ampDecay, ampSustain, ampRelease);
-
             voice->updateFilter1(filter1Type, filter1Cutoff, filter1Resonance);
             voice->updateFilter2(filter2Type, filter2Cutoff, filter2Resonance);
+
+            voice->updateAmplitudeAdsr(ampAttack, ampDecay, ampSustain, ampRelease);
         }
     }
 
     renderNextBlock(audioBuffer, midiBuffer, 0, audioBuffer.getNumSamples());
+
+    // Store the buffer data
+    m_circularBuffer.storeBlock(audioBuffer);
 
     // Get RMS in range [0.0..1.0]
     float rmsLevelLeft = audioBuffer.getRMSLevel(0, 0, audioBuffer.getNumSamples());
