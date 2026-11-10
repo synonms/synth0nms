@@ -28,3 +28,41 @@ void CircularBuffer::storeBlock(juce::AudioBuffer<float>& audioBuffer)
     m_writePosition += audioBufferSize;
     m_writePosition %= circularBufferSize;
 }
+
+juce::AudioBuffer<float> CircularBuffer::readBlock(const int startPositionOffset, const int numSamplesToRead) const
+{
+    const int circularBufferSize = getNumSamples();
+    const int numChannels = getNumChannels();
+
+    juce::AudioBuffer<float> buffer {numChannels, numSamplesToRead};
+
+    if (numSamplesToRead > circularBufferSize)
+    {
+        throw;
+    }
+
+    for (int channel = 0; channel < numChannels; ++channel)
+    {
+        auto readPosition = m_writePosition - startPositionOffset;
+
+        if (readPosition < 0)
+        {
+            readPosition += circularBufferSize;
+        }
+
+        if (readPosition + numSamplesToRead < circularBufferSize)
+        {
+            buffer.addFrom(channel, 0, getReadPointer(channel, readPosition), numSamplesToRead);
+        }
+        else
+        {
+            const int numSamplesBeforeWrap = circularBufferSize - readPosition;
+            const int numSamplesAfterWrap = numSamplesToRead - numSamplesBeforeWrap;
+
+            buffer.addFrom(channel, 0, getReadPointer(channel, readPosition), numSamplesBeforeWrap);
+            buffer.addFrom(channel, numSamplesBeforeWrap, getReadPointer(channel, 0), numSamplesAfterWrap);
+        }
+    }
+
+    return buffer;
+}

@@ -8,14 +8,14 @@ void MasterModule::apply(juce::AudioBuffer<float>& audioBuffer, const int startS
     m_gain.process(context);
 
     // Get RMS in range [0.0..1.0]
-    float rmsLevelLeft = audioBuffer.getRMSLevel(0, 0, audioBuffer.getNumSamples());
-    float rmsLevelRight = audioBuffer.getRMSLevel(1, 0, audioBuffer.getNumSamples());
+    float rmsLevelLeft = audioBuffer.getRMSLevel(0, startSample, numSamples);
+    float rmsLevelRight = audioBuffer.getRMSLevel(1, startSample, numSamples);
     // Convert to dB and store
     float rmsLevelLeftInDecibels = juce::Decibels::gainToDecibels(rmsLevelLeft);
     float rmsLevelRightInDecibels = juce::Decibels::gainToDecibels(rmsLevelRight);
 
-    m_rmsLevelsInDecibels[0].skip(audioBuffer.getNumSamples());
-    m_rmsLevelsInDecibels[1].skip(audioBuffer.getNumSamples());
+    m_rmsLevelsInDecibels[0].skip(numSamples);
+    m_rmsLevelsInDecibels[1].skip(numSamples);
 
     if (rmsLevelLeftInDecibels < m_rmsLevelsInDecibels[0].getCurrentValue())
     {

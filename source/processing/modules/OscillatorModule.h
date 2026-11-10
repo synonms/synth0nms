@@ -9,7 +9,7 @@ class OscillatorModule : public juce::dsp::Oscillator<float>, public ISoundModul
 {
 public:
     OscillatorModule();
-    ~OscillatorModule() override = default;
+    virtual ~OscillatorModule() = default;
 
     // ISoundModule
     void apply(juce::AudioBuffer<float>& audioBuffer, int startSample, int numSamples) override;

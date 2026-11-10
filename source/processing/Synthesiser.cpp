@@ -5,6 +5,7 @@
 
 Synthesiser::Synthesiser(StateParameters& stateParameters)
     : m_stateParameters(stateParameters)
+    , m_delayModule(m_circularBuffer)
 {
     addSound(new SynthSound());
     addVoice(new SynthVoice());
@@ -31,6 +32,7 @@ void Synthesiser::initialise (const double sampleRate, const int samplesPerBlock
         }
     }
 
+    m_delayModule.initialise(processSpec);
     m_masterModule.initialise(processSpec);
 }
 
@@ -81,7 +83,14 @@ void Synthesiser::processBlock (juce::AudioBuffer<float>& audioBuffer, const juc
     renderNextBlock(audioBuffer, midiBuffer, 0, audioBuffer.getNumSamples());
 
     // Store the buffer data
+    // Do it BEFORE wet effects??
     m_circularBuffer.storeBlock(audioBuffer);
+
+    const float delayInSeconds = m_stateParameters.getParameterValue("DELAYINS");
+    const float delayIntensity = m_stateParameters.getParameterValue("DELAYINTENSITY");
+
+    m_delayModule.update(delayInSeconds, delayIntensity);
+    m_delayModule.apply(audioBuffer, 0, audioBuffer.getNumSamples());
 
     const float gain = m_stateParameters.getParameterValue("GAIN");
 

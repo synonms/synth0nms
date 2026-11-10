@@ -8,6 +8,7 @@
 class EnvelopeModule : public juce::ADSR, public ISoundModule
 {
 public:
+    virtual ~EnvelopeModule() = default;
 
     // ISoundModule
     void apply(juce::AudioBuffer<float>& audioBuffer, int startSample, int numSamples) override;

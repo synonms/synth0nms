@@ -4,6 +4,7 @@
 
 #include "../StateParameters.h"
 #include "CircularBuffer.h"
+#include "modules/DelayModule.h"
 #include "modules/MasterModule.h"
 
 class Synthesiser : public juce::Synthesiser
@@ -22,6 +23,7 @@ public:
 private:
     StateParameters& m_stateParameters;
     CircularBuffer m_circularBuffer;
+    DelayModule m_delayModule;
     MasterModule m_masterModule;
 };
 

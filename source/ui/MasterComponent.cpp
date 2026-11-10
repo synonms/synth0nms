@@ -52,7 +52,7 @@ void MasterComponent::setSliderParams(juce::Slider& slider, juce::Label& label)
     addAndMakeVisible(label);
 }
 
-void MasterComponent::paintMeter(juce::Graphics& graphics, juce::Rectangle<float> bounds, float rmsLevelInDecibels)
+void MasterComponent::paintMeter(juce::Graphics& graphics, juce::Rectangle<float> bounds, const float rmsLevelInDecibels)
 {
     graphics.setColour(juce::Colours::white.withBrightness(0.4f));
     graphics.fillRoundedRectangle(bounds, 5.f);
