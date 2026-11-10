@@ -1,6 +1,6 @@
-#include "Filter.h"
+#include "FilterModule.h"
 
-void Filter::apply(juce::AudioBuffer<float> &audioBuffer, int startSample, int numSamples)
+void FilterModule::apply(juce::AudioBuffer<float> &audioBuffer, int startSample, int numSamples)
 {
     if (!isEnabled) return;
 
@@ -10,13 +10,13 @@ void Filter::apply(juce::AudioBuffer<float> &audioBuffer, int startSample, int n
     m_filter.process(context);
 }
 
-void Filter::initialise(const juce::dsp::ProcessSpec &processSpec)
+void FilterModule::initialise(const juce::dsp::ProcessSpec &processSpec)
 {
     m_filter.reset();
     m_filter.prepare(processSpec);
 }
 
-void Filter::updateParameters(const juce::dsp::StateVariableTPTFilterType& type, const float cutoffFrequency, const float resonance, const float modulator)
+void FilterModule::updateParameters(const juce::dsp::StateVariableTPTFilterType& type, const float cutoffFrequency, const float resonance, const float modulator)
 {
     float modulatedFrequency = std::clamp(cutoffFrequency * modulator, 20.0f, 20000.0f);
 
@@ -25,7 +25,7 @@ void Filter::updateParameters(const juce::dsp::StateVariableTPTFilterType& type,
     m_filter.setResonance(resonance);
 }
 
-void Filter::reset()
+void FilterModule::reset()
 {
     m_filter.reset();
 }

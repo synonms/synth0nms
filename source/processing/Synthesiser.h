@@ -4,6 +4,7 @@
 
 #include "../StateParameters.h"
 #include "CircularBuffer.h"
+#include "modules/MasterModule.h"
 
 class Synthesiser : public juce::Synthesiser
 {
@@ -13,16 +14,14 @@ public:
     void initialise (double sampleRate, int samplesPerBlock, int numOutputChannels);
     void processBlock (juce::AudioBuffer<float>& audioBuffer, const juce::MidiBuffer& midiBuffer);
 
-    float getRmsValue(const int channel) const
+    MasterModule& getMasterModule()
     {
-        return channel < 0 || channel > 1
-            ? -60.f
-            : m_rmsLevelsInDecibels[channel].getCurrentValue();
+        return m_masterModule;
     }
 
 private:
     StateParameters& m_stateParameters;
     CircularBuffer m_circularBuffer;
-    juce::LinearSmoothedValue<float> m_rmsLevelsInDecibels[2] { -60.f, -60.f };
+    MasterModule m_masterModule;
 };
 

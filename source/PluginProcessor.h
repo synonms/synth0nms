@@ -35,19 +35,19 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    StateParameters& getStateParameters()
-    {
-        return m_stateParameters;
-    }
-
     juce::MidiKeyboardState& getKeyboardState()
     {
         return m_keyboardState;
     }
 
-    float getRmsValue(const int channel) const
+    StateParameters& getStateParameters()
     {
-        return m_synth.getRmsValue(channel);
+        return m_stateParameters;
+    }
+
+    Synthesiser& getSynthesiser()
+    {
+        return m_synth;
     }
 
 protected:

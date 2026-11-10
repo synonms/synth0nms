@@ -4,10 +4,10 @@
 
 #include "ISoundModule.h"
 
-class Filter : public ISoundModule
+class FilterModule : public ISoundModule
 {
 public:
-    virtual ~Filter() = default;
+    virtual ~FilterModule() = default;
 
     // ISoundModule
     void apply(juce::AudioBuffer<float>& audioBuffer, int startSample, int numSamples) override;

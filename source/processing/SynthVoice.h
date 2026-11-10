@@ -3,9 +3,9 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_dsp/juce_dsp.h>
 
-#include "Adsr.h"
-#include "Filter.h"
-#include "Oscillator.h"
+#include "modules/EnvelopeModule.h"
+#include "modules/FilterModule.h"
+#include "modules/OscillatorModule.h"
 
 class SynthVoice : public juce::SynthesiserVoice
 {
@@ -20,7 +20,7 @@ public:
 //    void channelPressureChanged (int newChannelPressureValue) override;
     void renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
 
-    void prepareToPlay (double sampleRate, int samplesPerBlock, int outputChannelCount);
+    void initialise(const juce::dsp::ProcessSpec& processSpec);
 
     // Oscillator controls
     void updateOscillator1(bool isEnabled, const OscillatorFunctionType& functionType, const OscillatorFunctionType& blendFunctionType, float blendRatio);
@@ -35,12 +35,10 @@ public:
     void updateAmplitudeAdsr(float attack, float decay, float sustain, float release);
 
 private:
-    Oscillator m_oscillator1;
-    Oscillator m_oscillator2;
-    Oscillator m_oscillator3;
-    Filter m_filter1;
-    Filter m_filter2;
-    Adsr m_amplitudeAdsr;
-
-    juce::dsp::Gain<float> m_gain;
+    OscillatorModule m_oscillator1;
+    OscillatorModule m_oscillator2;
+    OscillatorModule m_oscillator3;
+    FilterModule m_filter1;
+    FilterModule m_filter2;
+    EnvelopeModule m_ampEnvelope;
 };

@@ -5,7 +5,7 @@
 
 #include "ISoundModule.h"
 
-class Adsr : public juce::ADSR, public ISoundModule
+class EnvelopeModule : public juce::ADSR, public ISoundModule
 {
 public:
 

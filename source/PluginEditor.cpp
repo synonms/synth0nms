@@ -36,9 +36,9 @@ void Synth0nmsAudioProcessorEditor::resized()
 
 void Synth0nmsAudioProcessorEditor::timerCallback()
 {
-    const float rmsLevelLeft = m_audioProcessor.getRmsValue(0);
-    const float rmsLevelRight = m_audioProcessor.getRmsValue(1);
-    m_synthesiserComponent.setRmsLevelInDecibels(0, rmsLevelLeft);
-    m_synthesiserComponent.setRmsLevelInDecibels(1, rmsLevelRight);
+    const MasterModule& masterModule = m_audioProcessor.getSynthesiser().getMasterModule();
+    const float rmsLevelLeft = masterModule.getRmsValue(0);
+    const float rmsLevelRight = masterModule.getRmsValue(1);
+    m_synthesiserComponent.setRmsLevelsInDecibels(rmsLevelLeft, rmsLevelRight);
 }
 

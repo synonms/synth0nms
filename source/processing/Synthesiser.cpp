@@ -20,16 +20,18 @@ void Synthesiser::initialise (const double sampleRate, const int samplesPerBlock
 
     setCurrentPlaybackSampleRate(sampleRate);
 
+    juce::dsp::ProcessSpec processSpec {};
+    processSpec.maximumBlockSize = samplesPerBlock;
+    processSpec.sampleRate = sampleRate;
+    processSpec.numChannels = numOutputChannels;
+
     for (int i = 0; i < getNumVoices(); ++i) {
         if (auto voice = dynamic_cast<SynthVoice*>(getVoice(i))) {
-            voice->prepareToPlay(sampleRate, samplesPerBlock, numOutputChannels);
+            voice->initialise(processSpec);
         }
     }
 
-    m_rmsLevelsInDecibels[0].reset(sampleRate, 0.5);
-    m_rmsLevelsInDecibels[1].reset(sampleRate, 0.5);
-    m_rmsLevelsInDecibels[0].setCurrentAndTargetValue(-100.f);
-    m_rmsLevelsInDecibels[1].setCurrentAndTargetValue(-100.f);
+    m_masterModule.initialise(processSpec);
 }
 
 void Synthesiser::processBlock (juce::AudioBuffer<float>& audioBuffer, const juce::MidiBuffer& midiBuffer)
@@ -48,9 +50,6 @@ void Synthesiser::processBlock (juce::AudioBuffer<float>& audioBuffer, const juc
     auto osc3FunctionType = static_cast<OscillatorFunctionType>(m_stateParameters.getParameterValue("OSC3FUNCTION"));
     auto osc3BlendFunctionType = static_cast<OscillatorFunctionType>(m_stateParameters.getParameterValue("OSC3BLENDFUNCTION"));
     const float osc3BlendRatio = m_stateParameters.getParameterValue("OSC3BLENDRATIO");
-
-    auto modulationOscEnabled = static_cast<bool>(m_stateParameters.getParameterValue("MODOSC1ENABLED"));
-    auto modulationOscFunctionType = static_cast<OscillatorFunctionType>(m_stateParameters.getParameterValue("MODOSC1FUNCTION"));
 
     const float ampAttack = m_stateParameters.getParameterValue("AMPATTACK");
     const float ampDecay = m_stateParameters.getParameterValue("AMPDECAY");
@@ -84,31 +83,9 @@ void Synthesiser::processBlock (juce::AudioBuffer<float>& audioBuffer, const juc
     // Store the buffer data
     m_circularBuffer.storeBlock(audioBuffer);
 
-    // Get RMS in range [0.0..1.0]
-    float rmsLevelLeft = audioBuffer.getRMSLevel(0, 0, audioBuffer.getNumSamples());
-    float rmsLevelRight = audioBuffer.getRMSLevel(1, 0, audioBuffer.getNumSamples());
-    // Convert to dB and store
-    float rmsLevelLeftInDecibels = juce::Decibels::gainToDecibels(rmsLevelLeft);
-    float rmsLevelRightInDecibels = juce::Decibels::gainToDecibels(rmsLevelRight);
+    const float gain = m_stateParameters.getParameterValue("GAIN");
 
-    m_rmsLevelsInDecibels[0].skip(audioBuffer.getNumSamples());
-    m_rmsLevelsInDecibels[1].skip(audioBuffer.getNumSamples());
-
-    if (rmsLevelLeftInDecibels < m_rmsLevelsInDecibels[0].getCurrentValue())
-    {
-        m_rmsLevelsInDecibels[0].setTargetValue(rmsLevelLeftInDecibels);
-    }
-    else
-    {
-        m_rmsLevelsInDecibels[0].setCurrentAndTargetValue(rmsLevelLeftInDecibels);
-    }
-
-    if (rmsLevelRightInDecibels < m_rmsLevelsInDecibels[1].getCurrentValue())
-    {
-        m_rmsLevelsInDecibels[1].setTargetValue(rmsLevelRightInDecibels);
-    }
-    else
-    {
-        m_rmsLevelsInDecibels[1].setCurrentAndTargetValue(rmsLevelRightInDecibels);
-    }
+    // apply gain and capture RMS levels
+    m_masterModule.setGain(gain);
+    m_masterModule.apply(audioBuffer, 0, audioBuffer.getNumSamples());
 }

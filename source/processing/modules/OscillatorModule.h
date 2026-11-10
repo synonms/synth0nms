@@ -2,13 +2,14 @@
 
 #include <juce_dsp/juce_dsp.h>
 
-#include "OscillatorFunctionType.h"
+#include "../OscillatorFunctionType.h"
 #include "ISoundModule.h"
 
-class Oscillator : public juce::dsp::Oscillator<float>, public ISoundModule
+class OscillatorModule : public juce::dsp::Oscillator<float>, public ISoundModule
 {
 public:
-    Oscillator();
+    OscillatorModule();
+    ~OscillatorModule() override = default;
 
     // ISoundModule
     void apply(juce::AudioBuffer<float>& audioBuffer, int startSample, int numSamples) override;

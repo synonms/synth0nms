@@ -1,10 +1,10 @@
-#include "Oscillator.h"
+#include "OscillatorModule.h"
 
-Oscillator::Oscillator() : juce::dsp::Oscillator<float>([] (float x) { return std::sin (x); })
+OscillatorModule::OscillatorModule() : juce::dsp::Oscillator<float>([] (float x) { return std::sin (x); })
 {
 }
 
-void Oscillator::apply(juce::AudioBuffer<float>& audioBuffer, const int startSample, const int numSamples)
+void OscillatorModule::apply(juce::AudioBuffer<float>& audioBuffer, const int startSample, const int numSamples)
 {
     if (!isEnabled) return;
 
@@ -14,42 +14,42 @@ void Oscillator::apply(juce::AudioBuffer<float>& audioBuffer, const int startSam
     process(context);
 }
 
-void Oscillator::initialise(const juce::dsp::ProcessSpec& processSpec)
+void OscillatorModule::initialise(const juce::dsp::ProcessSpec& processSpec)
 {
     prepare(processSpec);
 }
 
 
 
-void Oscillator::setBlendFunctionType(const OscillatorFunctionType &functionType)
+void OscillatorModule::setBlendFunctionType(const OscillatorFunctionType &functionType)
 {
     m_blendFunction = OscillatorFunction::getFunction(functionType);
     updateFunction();
 }
 
-void Oscillator::setBlendRatio(const float blendRatio)
+void OscillatorModule::setBlendRatio(const float blendRatio)
 {
     m_blendRatio = std::clamp(blendRatio, 0.0f, 1.0f);
     updateFunction();
 }
 
-void Oscillator::setFunctionType(const OscillatorFunctionType& functionType)
+void OscillatorModule::setFunctionType(const OscillatorFunctionType& functionType)
 {
     m_function = OscillatorFunction::getFunction(functionType);
     updateFunction();
 }
 
-void Oscillator::startNote(const int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
+void OscillatorModule::startNote(const int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
 {
     const auto frequency = static_cast<float>(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber));
     setFrequency(frequency);
 }
 
-void Oscillator::stopNote(float velocity, bool allowTailOff)
+void OscillatorModule::stopNote(float velocity, bool allowTailOff)
 {
 }
 
-void Oscillator::updateFunction()
+void OscillatorModule::updateFunction()
 {
     auto function = [this](float x)
     {

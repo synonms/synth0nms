@@ -2,9 +2,9 @@
 
 #include "AdsrComponent.h"
 #include "FilterComponent.h"
+#include "MasterComponent.h"
 #include "OscillatorComponent.h"
 #include "ModulationOscillatorComponent.h"
-#include "MeterComponent.h"
 
 #include "../StateParameters.h"
 
@@ -16,7 +16,11 @@ public:
 
     void paint(juce::Graphics& graphics) override;
     void resized() override;
-    void setRmsLevelInDecibels(int channel, float rmsLevelInDecibels);
+
+    void setRmsLevelsInDecibels(const float rmsLevelLeftInDecibels, const float rmsLevelRightInDecibels)
+    {
+        m_masterComponent.setRmsLevelsInDecibels(rmsLevelLeftInDecibels, rmsLevelRightInDecibels);
+    }
 
 private:
     OscillatorComponent m_oscillator1Component;
@@ -26,8 +30,7 @@ private:
     FilterComponent m_filter1Component;
     FilterComponent m_filter2Component;
     AdsrComponent m_amplitudeAdsrComponent;
-    MeterComponent m_meterLeftComponent;
-    MeterComponent m_meterRightComponent;
+    MasterComponent m_masterComponent;
 
     juce::MidiKeyboardComponent m_keyboardComponent;
 

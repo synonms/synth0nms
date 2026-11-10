@@ -1,12 +1,7 @@
 #include "SynthVoice.h"
 
-void SynthVoice::prepareToPlay (const double sampleRate, const int samplesPerBlock, const int outputChannelCount)
+void SynthVoice::initialise (const juce::dsp::ProcessSpec& processSpec)
 {
-    juce::dsp::ProcessSpec processSpec {};
-    processSpec.maximumBlockSize = samplesPerBlock;
-    processSpec.sampleRate = sampleRate;
-    processSpec.numChannels = outputChannelCount;
-
     m_oscillator1.initialise(processSpec);
     m_oscillator1.setIsEnabled(true);
     m_oscillator2.initialise(processSpec);
@@ -15,12 +10,11 @@ void SynthVoice::prepareToPlay (const double sampleRate, const int samplesPerBlo
     m_oscillator3.setIsEnabled(false);
 
     m_filter1.initialise(processSpec);
+    m_filter1.setIsEnabled(false);
     m_filter2.initialise(processSpec);
+    m_filter2.setIsEnabled(false);
 
-    m_amplitudeAdsr.initialise(processSpec);
-
-    m_gain.prepare(processSpec);
-    m_gain.setGainLinear(0.1f);
+    m_ampEnvelope.initialise(processSpec);
 }
 
 bool SynthVoice::canPlaySound (juce::SynthesiserSound* sound)
@@ -33,7 +27,7 @@ void SynthVoice::startNote (const int midiNoteNumber, const float velocity, juce
     m_oscillator1.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
     m_oscillator2.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
     m_oscillator3.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
-    m_amplitudeAdsr.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
+    m_ampEnvelope.startNote(midiNoteNumber, velocity, sound, currentPitchWheelPosition);
 }
 
 void SynthVoice::stopNote (const float velocity, const bool allowTailOff)
@@ -41,9 +35,9 @@ void SynthVoice::stopNote (const float velocity, const bool allowTailOff)
     m_oscillator1.stopNote(velocity, allowTailOff);
     m_oscillator2.stopNote(velocity, allowTailOff);
     m_oscillator3.stopNote(velocity, allowTailOff);
-    m_amplitudeAdsr.stopNote(velocity, allowTailOff);
+    m_ampEnvelope.stopNote(velocity, allowTailOff);
 
-    if (!allowTailOff || !m_amplitudeAdsr.isActive()) {
+    if (!allowTailOff || !m_ampEnvelope.isActive()) {
         clearCurrentNote();
     }
 }
@@ -74,12 +68,9 @@ void SynthVoice::renderNextBlock (juce::AudioBuffer<float>& outputBuffer, const 
     m_filter2.apply(outputBuffer, startSample, numSamples);
 
     // Apply Amplitude ADSR Function (Attack, Decay, Sustain, Release)
-    m_amplitudeAdsr.apply(outputBuffer, startSample, numSamples);
+    m_ampEnvelope.apply(outputBuffer, startSample, numSamples);
 
-    // Bring down gain to avoid blowing ear drums
-    m_gain.process(context);
-
-    if (!m_amplitudeAdsr.isActive()) {
+    if (!m_ampEnvelope.isActive()) {
         clearCurrentNote();
     }
 }
@@ -122,5 +113,5 @@ void SynthVoice::updateFilter2(const juce::dsp::StateVariableTPTFilterType& type
 
 void SynthVoice::updateAmplitudeAdsr(const float attack, const float decay, const float sustain, const float release)
 {
-    m_amplitudeAdsr.update(attack, decay, sustain, release);
+    m_ampEnvelope.update(attack, decay, sustain, release);
 }
